@@ -41,6 +41,11 @@ import NetworkRpg.GameClient;
 import com.jme3.app.Application;
 import com.jme3.audio.Environment;
 import com.jme3.audio.Listener;
+import com.jme3.input.InputManager;
+import com.jme3.input.KeyInput;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.AnalogListener;
+import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -59,7 +64,7 @@ import com.simsilica.es.EntityId;
  *
  *  @author    Paul Speed
  */
-public class PlayerState extends BaseAppState { //implements AnalogFunctionListener {
+public class PlayerState extends BaseAppState implements ActionListener, AnalogListener{ //implements AnalogFunctionListener {
                          
     private GameClient client;
     private EntityData ed;
@@ -71,7 +76,7 @@ public class PlayerState extends BaseAppState { //implements AnalogFunctionListe
     private Vector3f cameraDelta;
     private Vector3f audioDelta;
     private float cameraDistance = 15; //20; //12;
- 
+    private InputManager inputManager;
     // Here for the moment
     //private SensorArea sensor;
     private int xLast = -1;
@@ -99,11 +104,22 @@ public class PlayerState extends BaseAppState { //implements AnalogFunctionListe
 
     @Override
     protected void initialize( Application app ) {
- 
-         
+        this.inputManager = app.getInputManager();
+        inputManager.setCursorVisible(false);
         this.ed = client.getEntityData();
         this.player = client.getPlayer();
         app.getCamera().setLocation(new Vector3f(10f,10f,10f));
+        inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_H));
+        inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_J));
+        inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_K));
+        inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_L));
+        
+        inputManager.addListener(this, "Left");
+        inputManager.addListener(this, "Right");
+        inputManager.addListener(this, "Up");
+        inputManager.addListener(this, "Down");
+        
+        
         /*
         InputMapper inputMapper = GuiGlobals.getInstance().getInputMapper();
         inputMapper.addAnalogListener(this,
@@ -127,6 +143,22 @@ public class PlayerState extends BaseAppState { //implements AnalogFunctionListe
         * */
     }
 
+    public void onAction(String binding, boolean value, float tpf) {
+        if (binding.equals("Left")) {
+            System.out.println("Left");
+        } else if (binding.equals("Right")) {
+            System.out.println("Right");
+        } else if (binding.equals("Up")) {
+            System.out.println("Up");
+        } else if (binding.equals("Down")) {
+            System.out.println("Down");
+        } 
+    }
+    
+    public void onAnalog(String binding, float value, float tpf) {
+        
+    }
+    
     @Override
     protected void cleanup( Application app ) {
         /*
