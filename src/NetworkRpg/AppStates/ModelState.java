@@ -85,11 +85,13 @@ public class ModelState extends BaseAppState {
     private Node modelRoot;
     private ModelFactory factory;
     private BulletAppState bulletAppState;
-
-    public ModelState( TimeProvider time, ModelFactory factory, EntityData e ) {
+    private boolean isServer = false;
+    
+    public ModelState( TimeProvider time, ModelFactory factory, EntityData e, boolean IS) {
         this.time = time;
         this.factory = factory;
         this.ed = e;
+        this.isServer = IS;
     }
 
     public Node getModelRoot() {
@@ -151,7 +153,10 @@ public class ModelState extends BaseAppState {
         if (mt != null && mt.getType().equalsIgnoreCase("ogre")) {
             //s.getControl(BetterCharacterControl.class).warp(p.getLocation());
             //System.out.println("Updating Position");
-            ((Avatar)s).avatarControl.warp(p.getLocation());
+            if (this.isServer == false) {
+                ((Avatar)s).avatarControl.warp(p.getLocation());
+            }
+            
         }
         else
         { 

@@ -47,8 +47,9 @@ public class ServerMain extends SimpleApplication {
     
     public static void main(String[] args) {
         ServerMain app = new ServerMain();
-        app.start(JmeContext.Type.Headless);
-        //app.start();
+        app.setPauseOnLostFocus(false);
+        //app.start(JmeContext.Type.Headless);
+        app.start();
     }
 
     @Override
@@ -90,7 +91,7 @@ public class ServerMain extends SimpleApplication {
         TimeProvider time = systems.getGameTimeProvider();
         
         getStateManager().attach(new WorldState());
-        getStateManager().attach(new ModelState(time, new TrapModelFactory(this, null, time),systems.getEntityData()));
+        getStateManager().attach(new ModelState(time, new TrapModelFactory(this, null, time),systems.getEntityData(),true));
         // Will delegate certain messages to the GameMessageHandler for
         // a particular connection.
         SessionDataDelegator delegator = new SessionDataDelegator(GameMessageHandler.class, GameMessageHandler.ATTRIBUTE, true);

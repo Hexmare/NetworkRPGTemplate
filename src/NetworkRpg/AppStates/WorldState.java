@@ -48,7 +48,7 @@ public class WorldState extends BaseAppState {
         terrain.addControl(new RigidBodyControl(0));
         terrain.setShadowMode(RenderQueue.ShadowMode.Receive);
         bulletAppState.getPhysicsSpace().addAll(terrain);
-        
+        bulletAppState.setDebugEnabled(true);
         DirectionalLight sun = new DirectionalLight();
         sun.setDirection(new Vector3f(-.1f, -.7f, -1f));
         rootNode.addLight(sun);

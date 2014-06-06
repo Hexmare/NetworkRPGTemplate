@@ -106,7 +106,7 @@ public class GamePlayState extends BaseAppState {
 
         gameStates.add(new EntityDataState(ed));
         gameStates.add(new WorldState());
-        gameStates.add(new ModelState(time, new TrapModelFactory((SimpleApplication)app, audioListener, time),ed));
+        gameStates.add(new ModelState(time, new TrapModelFactory((SimpleApplication)app, audioListener, time),ed,false));
         //gameStates.add(new CharacterAnimState());
         //gameStates.add(new DeathState(time));
         //gameStates.add(new MazeState(maze));
