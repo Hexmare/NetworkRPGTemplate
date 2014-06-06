@@ -37,6 +37,7 @@ package NetworkRpg.Services;
 import NetworkRpg.Services.EntityDataService;
 import NetworkRpg.Services.Service;
 import NetworkRpg.TimeProvider;
+import com.jme3.app.SimpleApplication;
 import com.simsilica.es.EntityData;
 import java.util.*;
 import java.util.concurrent.*;
@@ -60,15 +61,17 @@ public class GameSystems {
     private ServiceRunnable serviceRunner;
     private TimeProvider gameTime;
     private List<Service> services = new ArrayList<Service>();
+    private SimpleApplication app;
     
-    public GameSystems() {        
+    public GameSystems(SimpleApplication a) {        
+        this.app = a;
         // Setup the Monkey Trap services
         services.add(new EntityDataService());
         //services.add(new DecayService());
         //services.add(new MazeService(48, 48));
         //services.add(new SpawnService(15));
         //services.add(new AiService());        
-        //services.add(new MovementService());
+        services.add(new MovementService());
         //services.add(new ItemPickupService());
         //services.add(new CombatBuffService());
         //services.add(new CombatInitiativeService());
@@ -79,6 +82,11 @@ public class GameSystems {
         serviceRunner = new ServiceRunnable();
     }
  
+    public SimpleApplication getApplication()
+    {
+        return app;
+    }
+    
     public EntityData getEntityData() {
         return getService(EntityDataService.class).getEntityData(); 
     }

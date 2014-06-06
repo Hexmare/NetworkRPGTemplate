@@ -40,6 +40,7 @@ import NetworkRpg.GameConstants;
 import NetworkRpg.Networking.Util;
 import NetworkRpg.RemoteGameClient;
 import com.jme3.app.Application;
+import com.jme3.app.SimpleApplication;
 import com.jme3.network.Client;
 import com.jme3.network.ClientStateListener;
 import com.jme3.network.ClientStateListener.DisconnectInfo;
@@ -106,10 +107,15 @@ public class ConnectionState extends BaseAppState {
         client.start();
     }
     
+    public Client getClient()
+    {
+        return client;
+    }
+    
     protected void connected() {       
         log.info("Connected");
         
-        gameClient = new RemoteGameClient(user, client, 0); 
+        gameClient = new RemoteGameClient(user, client, 0,(SimpleApplication)getApplication()); 
         
         remoteEd = gameClient.getEntityData(); //new RemoteEntityData(client, 0);
         test = remoteEd.getEntities(Position.class, ModelType.class);

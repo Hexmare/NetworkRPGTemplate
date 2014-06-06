@@ -35,12 +35,14 @@
 package NetworkRpg.AppStates;
 
 import NetworkRpg.GameClient;
+import NetworkRpg.Networking.Msg.CommandSet;
 //import trap.game.Direction;
 //import trap.game.Position;
 //import trap.game.SensorArea;
 import com.jme3.app.Application;
 import com.jme3.audio.Environment;
 import com.jme3.audio.Listener;
+import com.jme3.bullet.BulletAppState;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -49,10 +51,12 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.network.Client;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import com.simsilica.es.EntityData;
 import com.simsilica.es.EntityId;
+import org.lwjgl.opengl.APPLEAuxDepthStencil;
 //import com.simsilica.lemur.GuiGlobals;
 //import com.simsilica.lemur.event.BaseAppState;
 //import com.simsilica.lemur.input.AnalogFunctionListener;
@@ -69,7 +73,7 @@ public class PlayerState extends BaseAppState implements ActionListener, AnalogL
     private GameClient client;
     private EntityData ed;
     private EntityId player;
-    
+    private Client networkClient;
     private Node interpNode;
     //private Position lastPos;
     private Quaternion cameraAngle;
@@ -82,6 +86,12 @@ public class PlayerState extends BaseAppState implements ActionListener, AnalogL
     private int xLast = -1;
     private int yLast = -1;
  
+    private boolean fwd = false;
+    private boolean rev = false;
+    private boolean left = false;
+    private boolean right = false;
+    private boolean updateCommand = false;
+    
     private Listener audioListener = new Listener();
  
     public PlayerState( GameClient client, Listener audioListener ) {
@@ -104,6 +114,7 @@ public class PlayerState extends BaseAppState implements ActionListener, AnalogL
 
     @Override
     protected void initialize( Application app ) {
+        this.networkClient = getApplication().getStateManager().getState(ConnectionState.class).getClient();
         this.inputManager = app.getInputManager();
         inputManager.setCursorVisible(false);
         this.ed = client.getEntityData();
@@ -113,11 +124,13 @@ public class PlayerState extends BaseAppState implements ActionListener, AnalogL
         inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_J));
         inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_K));
         inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_L));
+        inputManager.addMapping("ToggleDebug", new KeyTrigger(KeyInput.KEY_F12));
         
         inputManager.addListener(this, "Left");
         inputManager.addListener(this, "Right");
         inputManager.addListener(this, "Up");
         inputManager.addListener(this, "Down");
+        inputManager.addListener(this, "ToggleDebug");
         
         
         /*
@@ -145,14 +158,25 @@ public class PlayerState extends BaseAppState implements ActionListener, AnalogL
 
     public void onAction(String binding, boolean value, float tpf) {
         if (binding.equals("Left")) {
-            System.out.println("Left");
+            left = value;
+            
         } else if (binding.equals("Right")) {
-            System.out.println("Right");
+            right = value;
         } else if (binding.equals("Up")) {
-            System.out.println("Up");
+            fwd = value;
         } else if (binding.equals("Down")) {
-            System.out.println("Down");
-        } 
+            rev = value;
+        } else if (binding.equalsIgnoreCase("toggledebug"))
+        {
+            if (!value) {
+                BulletAppState bs = getApplication().getStateManager().getState(BulletAppState.class);
+                bs.setDebugEnabled(!bs.isDebugEnabled());
+                System.out.println("setting debug");
+            }
+
+        }
+        
+        updateCommand = true;
     }
     
     public void onAnalog(String binding, float value, float tpf) {
@@ -176,6 +200,13 @@ public class PlayerState extends BaseAppState implements ActionListener, AnalogL
     @Override
     public void update( float tpf ) {
         Camera cam = getApplication().getCamera();
+        if (updateCommand) {
+            updateCommand = false;
+            System.out.println("sending update");
+            CommandSet cs = new CommandSet(player,fwd,rev,left,right);
+            networkClient.send(cs);
+            getApplication().getStateManager().getState(ModelState.class).setAvatarCommand(cs);
+        }
      /*
         Position pos = ed.getComponent(player, Position.class);
 

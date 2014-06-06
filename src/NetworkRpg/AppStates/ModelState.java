@@ -40,8 +40,14 @@ import NetworkRpg.Components.ModelType;
 import NetworkRpg.Components.Position;
 import NetworkRpg.Factories.ModelFactory;
 import NetworkRpg.Main;
+import NetworkRpg.Networking.Msg.CommandSet;
+import NetworkRpg.Objects.Avatar;
 import NetworkRpg.TimeProvider;
 import com.jme3.app.Application;
+import com.jme3.app.SimpleApplication;
+import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.control.BetterCharacterControl;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.simsilica.es.Entity;
@@ -78,16 +84,20 @@ public class ModelState extends BaseAppState {
     private Map<EntityId, Spatial> models = new HashMap<EntityId, Spatial>();
     private Node modelRoot;
     private ModelFactory factory;
+    private BulletAppState bulletAppState;
 
-    public ModelState( TimeProvider time, ModelFactory factory ) {
+    public ModelState( TimeProvider time, ModelFactory factory, EntityData e ) {
         this.time = time;
         this.factory = factory;
+        this.ed = e;
     }
 
     public Node getModelRoot() {
         return modelRoot;
     }
 
+
+    
     public Spatial getSpatial( EntityId entity ) {
         // Make sure we are up to date
         refreshModels();
@@ -137,9 +147,47 @@ public class ModelState extends BaseAppState {
         //if( ic != null ) {
         //    ic.setTarget(p.getLocation(), p.getFacing(), p.getChangeTime(), p.getTime());
         //} else {        
-            s.setLocalTranslation(p.getLocation());
-            s.setLocalRotation(p.getFacing());
+        ModelType mt = e.get(ModelType.class);
+        if (mt != null && mt.getType().equalsIgnoreCase("ogre")) {
+            //s.getControl(BetterCharacterControl.class).warp(p.getLocation());
+            //System.out.println("Updating Position");
+            ((Avatar)s).avatarControl.warp(p.getLocation());
+        }
+        else
+        { 
+            //s.setLocalTranslation(p.getLocation());
+            //s.setLocalRotation(p.getFacing());
+        }
+            
         //}
+    }
+    
+    public void setAvatarCommand(CommandSet cs)
+    {
+        Spatial s = models.get(cs.getEntityId());
+        Vector3f wd = new Vector3f();
+        
+        wd.set(0, 0, 0);
+        
+        Vector3f fd = s.getWorldRotation().clone().mult(Vector3f.UNIT_Z);
+        Vector3f ld = s.getWorldRotation().clone().mult(Vector3f.UNIT_X);
+        if (cs.isLeft()) {
+            wd.addLocal(ld);
+        }
+        if (cs.isRight()) {
+            wd.addLocal(ld.negate());
+        }
+        if (cs.isForward()) {
+            wd.addLocal(fd);
+        }
+        if (cs.isBack()) {
+            wd.addLocal(fd.negate());
+        }
+        //System.out.println(wd);
+        //mainClass.entityData.setComponent(mainClass.entityId, new walkDirection(wd.multLocal(3.5f,0,3.5f)));
+        ((Avatar)s).avatarControl.setWalkDirection(wd.multLocal(3.5f,0,3.5f));
+
+
     }
 
     protected void updateModels( Set<Entity> set ) {
@@ -150,7 +198,7 @@ public class ModelState extends BaseAppState {
                 log.error("Model not found for updated entity:" + e);
                 continue;
             }
-
+            System.out.println("Updating Model");
             updateModelSpatial(e, s);
         }
     }
@@ -169,11 +217,12 @@ public class ModelState extends BaseAppState {
         factory.setState(this);
 
         // Grab the set of entities we are interested in
-        ed = getState(EntityDataState.class).getEntityData();
+        //ed = getState(EntityDataState.class).getEntityData();
         entities = ed.getEntities(Position.class, ModelType.class);
 
         // Create a root for all of the models we create
         modelRoot = new Node("Model Root");
+        bulletAppState = app.getStateManager().getState(BulletAppState.class);
     }
 
     @Override
@@ -186,7 +235,7 @@ public class ModelState extends BaseAppState {
 
     @Override
     protected void enable() {
-        ((Main)getApplication()).getRootNode().attachChild(modelRoot);
+        ((SimpleApplication)getApplication()).getRootNode().attachChild(modelRoot);
 
         entities.applyChanges();
         addModels(entities);

@@ -1,5 +1,8 @@
 package NetworkRpg;
 
+import NetworkRpg.AppStates.ModelState;
+import NetworkRpg.AppStates.WorldState;
+import NetworkRpg.Factories.TrapModelFactory;
 import NetworkRpg.Handlers.GameMessageHandler;
 import NetworkRpg.Networking.Util;
 import NetworkRpg.Services.GameSystems;
@@ -50,7 +53,8 @@ public class ServerMain extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
-        this.systems = new GameSystems();
+        this.systems = new GameSystems(this);
+        
         try {
             // Create the network hosting connection
             host = Network.createServer(GameConstants.GAME_NAME, 
@@ -83,12 +87,13 @@ public class ServerMain extends SimpleApplication {
         
         // Start the game systems
         systems.start();
- 
+        TimeProvider time = systems.getGameTimeProvider();
+        
+        getStateManager().attach(new WorldState());
+        getStateManager().attach(new ModelState(time, new TrapModelFactory(this, null, time),systems.getEntityData()));
         // Will delegate certain messages to the GameMessageHandler for
         // a particular connection.
-        SessionDataDelegator delegator = new SessionDataDelegator(GameMessageHandler.class, 
-                                                                  GameMessageHandler.ATTRIBUTE,
-                                                                  true);
+        SessionDataDelegator delegator = new SessionDataDelegator(GameMessageHandler.class, GameMessageHandler.ATTRIBUTE, true);
         host.addMessageListener(delegator, delegator.getMessageTypes());
  
         // Add our own connection listener that will add GameMessageHandlers

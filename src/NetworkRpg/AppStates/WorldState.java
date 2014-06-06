@@ -6,6 +6,7 @@ package NetworkRpg.AppStates;
 
 import NetworkRpg.Main;
 import com.jme3.app.Application;
+import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -30,7 +31,7 @@ public class WorldState extends BaseAppState {
         bulletAppState = new BulletAppState();
         bulletAppState.setThreadingType(BulletAppState.ThreadingType.PARALLEL);
         getStateManager().attach(bulletAppState);
-        rootNode = ((Main) getApplication()).getRootNode();
+        rootNode = ((SimpleApplication) getApplication()).getRootNode();
         
         
         Spatial sceneModel = getApplication().getAssetManager().loadModel("Scenes/scene1.j3o");     

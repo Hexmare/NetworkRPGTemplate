@@ -34,12 +34,14 @@
 package NetworkRpg;
 
 
+import NetworkRpg.AppStates.ModelState;
 import NetworkRpg.GameClient;
 import NetworkRpg.Networking.Msg.CommandSet;
 import NetworkRpg.Networking.Msg.GameTimeMessage;
 import NetworkRpg.Networking.Msg.HelloMessage;
 import NetworkRpg.Networking.Msg.PlayerInfoMessage;
 import NetworkRpg.TimeProvider;
+import com.jme3.app.SimpleApplication;
 import com.simsilica.es.client.RemoteEntityData;
 import com.jme3.network.Client;
 import com.simsilica.es.EntityData;
@@ -77,12 +79,13 @@ public class RemoteGameClient implements GameClient {
     private ObjectMessageDelegator delegator;
     //private Direction lastDir;
     private long lastTime;
+    private SimpleApplication app;
 
-    public RemoteGameClient(String playerName, Client client, int entityChannel) {
+    public RemoteGameClient(String playerName, Client client, int entityChannel, SimpleApplication a) {
         this.client = client;
         this.playerName = playerName;
         this.ed = new RemoteEntityData(client, entityChannel);
-
+        this.app = a;
         this.delegator = new ObjectMessageDelegator(this, true);
         client.addMessageListener(delegator, delegator.getMessageTypes());
 
@@ -188,7 +191,9 @@ public class RemoteGameClient implements GameClient {
     
     public void cm (CommandSet msg)
     {
-        System.out.println("Command set received : " + getGameTime());
+        //System.out.println("Command set received : " + getGameTime());
+        app.getStateManager().getState(ModelState.class).setAvatarCommand(msg);
+        
     }
 
     public void close() {

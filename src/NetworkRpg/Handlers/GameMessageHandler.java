@@ -4,6 +4,7 @@
  */
 package NetworkRpg.Handlers;
 
+import NetworkRpg.AppStates.ModelState;
 import NetworkRpg.Components.Activity;
 import NetworkRpg.Components.Dead;
 import NetworkRpg.GameConstants;
@@ -86,7 +87,7 @@ public class GameMessageHandler {
             player = EntityFactories.createObject( GameConstants.TYPE_OGRE,
                                                    time, 
                                                    //loc,
-                                                   new Vector3f(temp,1f,temp),
+                                                   new Vector3f(temp,5f,temp),
                                                    new Name(name),
                                                    new Activity(Activity.SPAWNING, time, time + 2 * 1000 * 1000000) 
                                                     );            
@@ -122,6 +123,7 @@ public class GameMessageHandler {
     
     protected void commmandMessage(CommandSet msg){
         System.out.println("got command Message : " + systems.getGameTime());
+        systems.getApplication().getStateManager().getState(ModelState.class).setAvatarCommand(msg);
         conn.getServer().broadcast(msg);
     }
     

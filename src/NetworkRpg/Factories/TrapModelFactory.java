@@ -37,6 +37,7 @@ package NetworkRpg.Factories;
 import NetworkRpg.AppStates.ModelState;
 import NetworkRpg.Components.ModelType;
 import NetworkRpg.GameConstants;
+import NetworkRpg.Objects.*;
 //import trap.game.ModelType;
 import NetworkRpg.TimeProvider;
 import com.jme3.animation.AnimChannel;
@@ -67,6 +68,8 @@ import NetworkRpg.Controls.ColorControl;
 import NetworkRpg.Controls.FloatControl;
 import NetworkRpg.Controls.ParticleControl;
 import NetworkRpg.MaterialUtils;
+import com.jme3.app.SimpleApplication;
+import org.lwjgl.opengl.APPLEAuxDepthStencil;
 //import trap.task.Tasks;
 
 
@@ -79,11 +82,12 @@ public class TrapModelFactory implements ModelFactory {
     private AssetManager assets;
     private Listener audioListener;
     private TimeProvider time;
-    
+    private SimpleApplication app;
     private ModelState state;
     
-    public TrapModelFactory( AssetManager assets, Listener audioListener, TimeProvider time ) {
-        this.assets = assets;
+    public TrapModelFactory( SimpleApplication App, Listener audioListener, TimeProvider time ) {
+        this.app = App;
+        this.assets = app.getAssetManager();
         this.audioListener = audioListener;
         this.time = time;
     }
@@ -529,7 +533,8 @@ System.out.println( "Creating bling..." );
 
         wrapper.setQueueBucket(Bucket.Transparent);
         wrapper.setUserData("layer", 10);
-        return wrapper;
+        //return wrapper;
+        return new Avatar("ogre",app);
     }
     
     public Spatial createBarrels() {
