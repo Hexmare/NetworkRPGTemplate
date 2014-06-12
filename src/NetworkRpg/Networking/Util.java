@@ -31,7 +31,8 @@ public class Util {
         ClientKill.class,
         LocAndDir.class,
         PlayerInfoMessage.class,
-        CommandSet.class
+        CommandSet.class,
+        ViewDirection.class
     };
     
     private static final Class[] forced = {

@@ -9,7 +9,6 @@ import NetworkRpg.Components.Activity;
 import NetworkRpg.Components.Dead;
 import NetworkRpg.GameConstants;
 import NetworkRpg.Services.GameSystems;
-import NetworkRpg.Networking.Msg.ClientKill;
 import NetworkRpg.Networking.Msg.CommandSet;
 import NetworkRpg.Networking.Msg.GameTimeMessage;
 import NetworkRpg.Networking.Msg.HelloMessage;
@@ -17,6 +16,7 @@ import NetworkRpg.Networking.Msg.LocAndDir;
 import NetworkRpg.Networking.Msg.PlayerInfoMessage;
 import NetworkRpg.Networking.Msg.ServerKill;
 import NetworkRpg.Factories.EntityFactories;
+import NetworkRpg.Networking.Msg.ViewDirection;
 import com.jme3.math.Vector3f;
 import com.jme3.network.HostedConnection;
 import com.simsilica.es.EntityData;
@@ -122,8 +122,13 @@ public class GameMessageHandler {
     }
     
     protected void commmandMessage(CommandSet msg){
-        System.out.println("got command Message : " + systems.getGameTime());
+        //System.out.println("got command Message : " + systems.getGameTime());
         systems.getApplication().getStateManager().getState(ModelState.class).setAvatarCommand(msg);
+        conn.getServer().broadcast(msg);
+    }
+    
+    protected void viewDirection(ViewDirection msg){
+        systems.getApplication().getStateManager().getState(ModelState.class).setAvatarViewDirection(msg);
         conn.getServer().broadcast(msg);
     }
     

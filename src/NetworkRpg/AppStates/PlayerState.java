@@ -45,9 +45,12 @@ import com.jme3.audio.Listener;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
+import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.input.controls.MouseAxisTrigger;
+import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -91,6 +94,8 @@ public class PlayerState extends BaseAppState implements ActionListener, AnalogL
     private boolean left = false;
     private boolean right = false;
     private boolean updateCommand = false;
+    private boolean pan = false;
+    
     
     private Listener audioListener = new Listener();
  
@@ -116,21 +121,33 @@ public class PlayerState extends BaseAppState implements ActionListener, AnalogL
     protected void initialize( Application app ) {
         this.networkClient = getApplication().getStateManager().getState(ConnectionState.class).getClient();
         this.inputManager = app.getInputManager();
-        inputManager.setCursorVisible(false);
+        inputManager.setCursorVisible(true);
         this.ed = client.getEntityData();
         this.player = client.getPlayer();
-        app.getCamera().setLocation(new Vector3f(10f,10f,10f));
-        inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_H));
-        inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_J));
-        inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_K));
-        inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_L));
+        //app.getCamera().setLocation(new Vector3f(10f,10f,10f));
+        inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_A));
+        inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_D));
+        inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_W));
+        inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_S));
         inputManager.addMapping("ToggleDebug", new KeyTrigger(KeyInput.KEY_F12));
+        inputManager.addMapping("Pan", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
+	inputManager.addMapping("TurnLeft", new MouseAxisTrigger(MouseInput.AXIS_X,true));
+	inputManager.addMapping("TurnRight", new MouseAxisTrigger(MouseInput.AXIS_X,false));
+	inputManager.addMapping("MouselookDown", new MouseAxisTrigger(MouseInput.AXIS_Y,true));
+	inputManager.addMapping("MouselookUp", new MouseAxisTrigger(MouseInput.AXIS_Y,false));
+        
+        
         
         inputManager.addListener(this, "Left");
         inputManager.addListener(this, "Right");
         inputManager.addListener(this, "Up");
         inputManager.addListener(this, "Down");
         inputManager.addListener(this, "ToggleDebug");
+        inputManager.addListener(this, "Pan");
+	inputManager.addListener(this, "TurnLeft");
+	inputManager.addListener(this, "TurnRight");
+	inputManager.addListener(this, "MouselookDown");
+	inputManager.addListener(this, "MouselookUp");
         
         
         /*
@@ -174,13 +191,20 @@ public class PlayerState extends BaseAppState implements ActionListener, AnalogL
                 System.out.println("setting debug");
             }
 
+        }else if (binding.equals("Pan"))
+        {
+            pan=value;
+            inputManager.setCursorVisible(!value);
+            //System.out.println("Pan = : ");
         }
         
         updateCommand = true;
     }
     
     public void onAnalog(String binding, float value, float tpf) {
-        
+        if (pan) {
+            getApplication().getStateManager().getState(ModelState.class).setAvatarDirection(binding, value, tpf);
+        }
     }
     
     @Override
@@ -202,7 +226,7 @@ public class PlayerState extends BaseAppState implements ActionListener, AnalogL
         Camera cam = getApplication().getCamera();
         if (updateCommand) {
             updateCommand = false;
-            System.out.println("sending update");
+            //System.out.println("sending update");
             CommandSet cs = new CommandSet(player,fwd,rev,left,right);
             networkClient.send(cs);
             getApplication().getStateManager().getState(ModelState.class).setAvatarCommand(cs);

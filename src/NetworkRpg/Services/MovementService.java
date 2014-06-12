@@ -75,7 +75,7 @@ public class MovementService implements Service {
 
     public void update(long gameTime) {
         mobs.applyChanges();
-
+        //System.out.println("Updating");
         // Keep track of the places that are moved to
         // in this frame so that we can cancel additional moves of
         // mobs into those spaces without having to constantly
@@ -91,8 +91,10 @@ public class MovementService implements Service {
         ModelState ms = systems.getApplication().getStateManager().getState(ModelState.class);
         // Perform all movements for all active mobs
         for (Entity e : mobs) {
-            ms.getSpatial(e.getId());
-            Vector3f currentPos = ((Avatar)ms.getSpatial(e.getId())).getLocalTranslation();
+            Avatar modelAvatar = (Avatar)ms.getSpatial(e.getId());
+            Vector3f currentPos = modelAvatar.getChild("character node").getLocalTranslation();
+            System.out.println(currentPos);
+            //System.out.println(currentPos);
             ed.setComponent(e.getId(), new Position(currentPos,gameTime,gameTime));
 //            MoveTo to = e.get(MoveTo.class);
 //            if (to == null) {

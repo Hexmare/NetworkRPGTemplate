@@ -35,12 +35,11 @@ package NetworkRpg;
 
 
 import NetworkRpg.AppStates.ModelState;
-import NetworkRpg.GameClient;
 import NetworkRpg.Networking.Msg.CommandSet;
 import NetworkRpg.Networking.Msg.GameTimeMessage;
 import NetworkRpg.Networking.Msg.HelloMessage;
 import NetworkRpg.Networking.Msg.PlayerInfoMessage;
-import NetworkRpg.TimeProvider;
+import NetworkRpg.Networking.Msg.ViewDirection;
 import com.jme3.app.SimpleApplication;
 import com.simsilica.es.client.RemoteEntityData;
 import com.jme3.network.Client;
@@ -80,7 +79,9 @@ public class RemoteGameClient implements GameClient {
     //private Direction lastDir;
     private long lastTime;
     private SimpleApplication app;
-
+    private ThirdPersonPlayerNode tpn;
+    private ThirdPersonCamera camera;
+    
     public RemoteGameClient(String playerName, Client client, int entityChannel, SimpleApplication a) {
         this.client = client;
         this.playerName = playerName;
@@ -148,6 +149,15 @@ public class RemoteGameClient implements GameClient {
      protected void playerInfo( PlayerInfoMessage msg ) {
         System.out.println( "playerInfo(" + msg + ")" );
         player = msg.getEntityId();
+        System.out.println(app.getStateManager().getState(ModelState.class));
+
+     }
+     
+     protected void viewDirection( ViewDirection msg)
+     {
+         if (msg.getEid().getId() != player.getId()) {
+             app.getStateManager().getState(ModelState.class).setAvatarViewDirection(msg);
+         }
      }
 
      /*
@@ -157,7 +167,7 @@ public class RemoteGameClient implements GameClient {
      }
      */
     protected void gameTime(GameTimeMessage msg) {
-        System.out.println( "gameTime:" + msg );
+        //System.out.println( "gameTime:" + msg );
         if (msg.getTime() != msg.getSentTime()) {
             long gt = getGameTime();
             //System.out.println( "game time:" + gt );            

@@ -69,6 +69,7 @@ import NetworkRpg.Controls.FloatControl;
 import NetworkRpg.Controls.ParticleControl;
 import NetworkRpg.MaterialUtils;
 import com.jme3.app.SimpleApplication;
+import com.jme3.math.Quaternion;
 import org.lwjgl.opengl.APPLEAuxDepthStencil;
 //import trap.task.Tasks;
 
@@ -468,6 +469,8 @@ System.out.println( "Creating bling..." );
         bounds = (BoundingBox)ogre.getWorldBound();
         ogre.setLocalTranslation(0, bounds.getYExtent() - bounds.getCenter().y, 0);
  
+        
+        
         AnimControl anim = ogre.getControl(AnimControl.class);
         AnimChannel channel = anim.createChannel();
         channel.setAnim("IdleTop");

@@ -39,14 +39,17 @@ package NetworkRpg.AppStates;
 import NetworkRpg.Components.ModelType;
 import NetworkRpg.Components.Position;
 import NetworkRpg.Factories.ModelFactory;
-import NetworkRpg.Main;
+import NetworkRpg.GameClient;
 import NetworkRpg.Networking.Msg.CommandSet;
+import NetworkRpg.Networking.Msg.ViewDirection;
 import NetworkRpg.Objects.Avatar;
+import NetworkRpg.ThirdPersonCamera;
 import NetworkRpg.TimeProvider;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
-import com.jme3.bullet.control.BetterCharacterControl;
+import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -57,7 +60,6 @@ import com.simsilica.es.EntitySet;
 //import com.simsilica.lemur.event.BaseAppState;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -86,6 +88,11 @@ public class ModelState extends BaseAppState {
     private ModelFactory factory;
     private BulletAppState bulletAppState;
     private boolean isServer = false;
+    private GameClient client;
+    private ThirdPersonCamera camera;
+    private Avatar playerAvatar;
+    private float mouselookSpeed = FastMath.PI;
+    
     
     public ModelState( TimeProvider time, ModelFactory factory, EntityData e, boolean IS) {
         this.time = time;
@@ -128,6 +135,14 @@ public class ModelState extends BaseAppState {
             models.put(e.getId(), s);
             updateModelSpatial(e, s);
             modelRoot.attachChild(s);
+            if (!isServer) {
+                if (e.getId().getId() == client.getPlayer().getId()) {
+                System.out.println("Here is our player");
+                playerAvatar = (Avatar)s;
+                camera = new ThirdPersonCamera("Camera Node", getApplication().getCamera(), (Node)((Avatar)s).getChild("character node"));
+            }
+            }
+            
         }
     }
 
@@ -140,6 +155,7 @@ public class ModelState extends BaseAppState {
                 continue;
             }
             s.removeFromParent();
+            getApplication().getStateManager().getState(BulletAppState.class).getPhysicsSpace().remove(((Avatar)s).avatarControl);                   
         }
     }
 
@@ -174,8 +190,12 @@ public class ModelState extends BaseAppState {
         
         wd.set(0, 0, 0);
         
-        Vector3f fd = s.getWorldRotation().clone().mult(Vector3f.UNIT_Z);
-        Vector3f ld = s.getWorldRotation().clone().mult(Vector3f.UNIT_X);
+        Vector3f fd = ((Node)s).getChild(0).getWorldRotation().clone().mult(Vector3f.UNIT_Z);
+        Vector3f ld = ((Node)s).getChild(0).getWorldRotation().clone().mult(Vector3f.UNIT_X);
+//        Vector3f fd = playerAvatar.avatarControl.getViewDirection().clone().mult(Vector3f.UNIT_Z);
+//        Vector3f ld = playerAvatar.avatarControl.getViewDirection().clone().mult(Vector3f.UNIT_X);
+        System.out.println(fd);
+//        playerAvatar.avatarControl.getViewDirection()
         if (cs.isLeft()) {
             wd.addLocal(ld);
         }
@@ -190,9 +210,69 @@ public class ModelState extends BaseAppState {
         }
         //System.out.println(wd);
         //mainClass.entityData.setComponent(mainClass.entityId, new walkDirection(wd.multLocal(3.5f,0,3.5f)));
-        ((Avatar)s).avatarControl.setWalkDirection(wd.multLocal(3.5f,0,3.5f));
+        ((Avatar)s).avatarControl.setWalkDirection(wd.mult(new Vector3f(3.5f,0,3.5f)));
 
 
+    }
+    
+    public void setAvatarViewDirection(ViewDirection msg)
+    {
+        Avatar s = (Avatar) models.get(msg.getEid());
+        s.avatarControl.setViewDirection(msg.getDirection());
+        
+        Quaternion turn = new Quaternion();
+        turn.fromAngleAxis(s.avatarControl.getViewDirection().normalize().angleBetween(s.avatarControl.getViewDirection().normalize()), Vector3f.UNIT_Y);
+        s.avatarControl.setWalkDirection(turn.mult(s.avatarControl.getWalkDirection()));
+    }
+    
+    public void setAvatarDirection(String dir,float value,float tpf)
+    {
+        //System.out.println("setting direction");
+        if (dir.equals("TurnLeft"))
+	{
+
+            Quaternion turn = new Quaternion();
+	    turn.fromAngleAxis(mouselookSpeed*value, Vector3f.UNIT_Y);
+	    playerAvatar.avatarControl.setViewDirection(turn.mult(playerAvatar.avatarControl.getViewDirection()));
+            
+
+	}
+	else if (dir.equals("TurnRight"))
+	{
+	    
+
+            Quaternion turn = new Quaternion();
+	    turn.fromAngleAxis(-mouselookSpeed*value, Vector3f.UNIT_Y);
+            
+	    playerAvatar.avatarControl.setViewDirection(turn.mult(playerAvatar.avatarControl.getViewDirection()));
+
+	}
+	else if (dir.equals("MouselookDown"))
+	{
+
+                camera.verticalRotate(mouselookSpeed*value);
+
+            
+	}
+	else if (dir.equals("MouselookUp"))
+	{
+
+                camera.verticalRotate(-mouselookSpeed*value);
+
+            
+	}
+        
+        //System.out.println(playerAvatar.avatarControl.getViewDirection());
+        
+        Quaternion turn = new Quaternion();
+        turn.fromAngleAxis(playerAvatar.avatarControl.getViewDirection().normalize().angleBetween(playerAvatar.avatarControl.getViewDirection().normalize()), Vector3f.UNIT_Y);
+        playerAvatar.avatarControl.setWalkDirection(turn.mult(playerAvatar.avatarControl.getWalkDirection()));
+        if (!isServer) {
+            
+            ViewDirection cs = new ViewDirection(getApplication().getStateManager().getState(PlayerState.class).getClient().getPlayer(),playerAvatar.avatarControl.getViewDirection());
+            getApplication().getStateManager().getState(ConnectionState.class).getClient().send(cs);
+        }
+        
     }
 
     protected void updateModels( Set<Entity> set ) {
@@ -203,7 +283,7 @@ public class ModelState extends BaseAppState {
                 log.error("Model not found for updated entity:" + e);
                 continue;
             }
-            System.out.println("Updating Model");
+            //System.out.println("Updating Model");
             updateModelSpatial(e, s);
         }
     }
@@ -228,6 +308,10 @@ public class ModelState extends BaseAppState {
         // Create a root for all of the models we create
         modelRoot = new Node("Model Root");
         bulletAppState = app.getStateManager().getState(BulletAppState.class);
+        if (!isServer) {
+            client = app.getStateManager().getState(GamePlayState.class).getClient();
+        }
+        
     }
 
     @Override

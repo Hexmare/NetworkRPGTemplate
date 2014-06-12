@@ -71,6 +71,8 @@ public class GameSystems {
         //services.add(new MazeService(48, 48));
         //services.add(new SpawnService(15));
         //services.add(new AiService());        
+        
+        //Removed this from servicses. Instead this should be taken care of in MovementAppState on server
         services.add(new MovementService());
         //services.add(new ItemPickupService());
         //services.add(new CombatBuffService());

@@ -1,6 +1,7 @@
 package NetworkRpg;
 
 import NetworkRpg.AppStates.ModelState;
+import NetworkRpg.AppStates.MovementAppState;
 import NetworkRpg.AppStates.WorldState;
 import NetworkRpg.Factories.TrapModelFactory;
 import NetworkRpg.Handlers.GameMessageHandler;
@@ -48,8 +49,8 @@ public class ServerMain extends SimpleApplication {
     public static void main(String[] args) {
         ServerMain app = new ServerMain();
         app.setPauseOnLostFocus(false);
-        //app.start(JmeContext.Type.Headless);
-        app.start();
+        app.start(JmeContext.Type.Headless);
+        //app.start();
     }
 
     @Override
@@ -92,6 +93,7 @@ public class ServerMain extends SimpleApplication {
         
         getStateManager().attach(new WorldState());
         getStateManager().attach(new ModelState(time, new TrapModelFactory(this, null, time),systems.getEntityData(),true));
+        //getStateManager().attach(new MovementAppState(systems.getEntityData(),systems));
         // Will delegate certain messages to the GameMessageHandler for
         // a particular connection.
         SessionDataDelegator delegator = new SessionDataDelegator(GameMessageHandler.class, GameMessageHandler.ATTRIBUTE, true);

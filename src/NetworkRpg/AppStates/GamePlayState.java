@@ -63,6 +63,7 @@ import NetworkRpg.Components.ModelType;
 import NetworkRpg.Factories.TrapModelFactory;
 import NetworkRpg.GameClient;
 import NetworkRpg.GameConstants;
+import NetworkRpg.ThirdPersonCamera;
 import NetworkRpg.TimeProvider;
 
 
@@ -86,6 +87,11 @@ public class GamePlayState extends BaseAppState {
         this.client = client;
     }
 
+    public GameClient getClient()
+    {
+        return client;
+    }
+    
     @Override
     protected void initialize(Application app) {
 
@@ -125,11 +131,16 @@ public class GamePlayState extends BaseAppState {
                                          HitPoints.class, MaxHitPoints.class,
                                          CombatStrength.class, ArmorStrength.class);
         
+        
         // Attach all of the child states
         AppStateManager stateMgr = app.getStateManager();
         for( AppState state : gameStates ) {
             stateMgr.attach(state);   
-        }                
+        }      
+        
+        
+        
+        
     }
 
     @Override
