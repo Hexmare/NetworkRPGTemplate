@@ -8,14 +8,10 @@ package NetworkRpg;
  *
  * @author Rebel
  */
-import NetworkRpg.AppStates.ConnectionState;
-import NetworkRpg.AppStates.ErrorState;
 import NetworkRpg.AppStates.MainMenuState;
-import NetworkRpg.Networking.Util;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
-import com.jme3.system.AppSettings;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.builder.EffectBuilder;
 import de.lessvoid.nifty.builder.PanelBuilder;
@@ -23,12 +19,9 @@ import de.lessvoid.nifty.builder.PopupBuilder;
 import de.lessvoid.nifty.controls.Console;
 import de.lessvoid.nifty.controls.ConsoleCommands;
 import de.lessvoid.nifty.controls.console.builder.ConsoleBuilder;
-import de.lessvoid.nifty.effects.EffectEventId;
 import de.lessvoid.nifty.elements.Element;
-import de.lessvoid.nifty.elements.render.ImageRenderer;
 import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.input.NiftyInputEvent;
-import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
@@ -89,13 +82,13 @@ public class GameGuiController extends AbstractAppState implements ScreenControl
         consoleCommands = new ConsoleCommands(nifty, console);
 
         ConsoleCommands.ConsoleCommand showCommand = new ShowCommand();
-        consoleCommands.registerCommand("show ListBox", showCommand);
-        consoleCommands.registerCommand("show DropDown", showCommand);
-        consoleCommands.registerCommand("show TextField", showCommand);
-        consoleCommands.registerCommand("show Slider", showCommand);
-        consoleCommands.registerCommand("show ScrollPanel", showCommand);
+//        consoleCommands.registerCommand("show ListBox", showCommand);
+//        consoleCommands.registerCommand("show DropDown", showCommand);
+//        consoleCommands.registerCommand("show TextField", showCommand);
+//        consoleCommands.registerCommand("show Slider", showCommand);
+//        consoleCommands.registerCommand("show ScrollPanel", showCommand);
         consoleCommands.registerCommand("show ChatControl", showCommand);
-        consoleCommands.registerCommand("show DragAndDrop", showCommand);
+//        consoleCommands.registerCommand("show DragAndDrop", showCommand);
 
         NiftyCommand niftyCommand = new NiftyCommand();
         consoleCommands.registerCommand("nifty screen", niftyCommand);
@@ -261,8 +254,8 @@ public class GameGuiController extends AbstractAppState implements ScreenControl
                 console.outputError("command argument error");
                 return;
             }
-//            // this really is a hack to get from the command argument, like: "ListBox" to the matching "menuButtonId" 
-//            String menuButtonId = "menuButton" + args[1];
+            // this really is a hack to get from the command argument, like: "ListBox" to the matching "menuButtonId" 
+            String menuButtonId = args[1];
 //            if (!buttonToDialogMap.containsKey(menuButtonId)) {
 //                console.outputError("'" + menuButtonId + "' is not a registered dialog.");
 //                return;
@@ -273,9 +266,9 @@ public class GameGuiController extends AbstractAppState implements ScreenControl
 //                console.outputError("Hah! Already there! I'm smart... :>");
 //                return;
 //            }
-//
-//            // finally switch
-//            changeDialogTo(menuButtonId);
+
+            // finally switch
+            changeDialogTo(menuButtonId);
         }
     }
 
@@ -329,6 +322,9 @@ public class GameGuiController extends AbstractAppState implements ScreenControl
     }
 
     private void changeDialogTo(final String id) {
+        System.out.println(id);
+        Element currentElement = screen.findElementByName(id);
+        currentElement.show();
 //        if (!id.equals(currentMenuButtonId)) {
 //            int currentIndex = buttonIdList.indexOf(currentMenuButtonId);
 //            int nextIndex = buttonIdList.indexOf(id);

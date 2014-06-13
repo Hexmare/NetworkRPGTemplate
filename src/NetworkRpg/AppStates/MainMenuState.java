@@ -34,6 +34,8 @@ import de.lessvoid.nifty.builder.EffectBuilder;
 import de.lessvoid.nifty.builder.PanelBuilder;
 import de.lessvoid.nifty.builder.PopupBuilder;
 import de.lessvoid.nifty.controls.console.builder.ConsoleBuilder;
+import de.lessvoid.nifty.examples.controls.chatcontrol.ChatControlDialogDefinition;
+import de.lessvoid.nifty.examples.controls.common.DialogPanelControlDefinition;
 import org.lwjgl.opengl.Display;
 import tonegod.gui.controls.buttons.ButtonAdapter;
 import tonegod.gui.controls.extras.SpriteElement;
@@ -86,6 +88,8 @@ public class MainMenuState extends AbstractAppState{
         nifty = niftyDisplay.getNifty();
         app.getGuiViewPort().addProcessor(niftyDisplay);
         nifty.loadControlFile("nifty-default-controls.xml");
+        ChatControlDialogDefinition.register(nifty);
+        DialogPanelControlDefinition.register(nifty);
         this.app.getFlyByCamera().setEnabled(false);
         niftyStartMenu();
 //        startMenu();
