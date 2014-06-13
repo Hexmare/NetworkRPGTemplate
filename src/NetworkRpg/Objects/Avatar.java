@@ -7,6 +7,8 @@ package NetworkRpg.Objects;
 //import SurviveES.Networking.ClientMain;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
+import com.jme3.animation.AnimEventListener;
+import com.jme3.animation.LoopMode;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.BetterCharacterControl;
@@ -18,7 +20,7 @@ import com.jme3.scene.Spatial;
  *
  * @author hexmare
  */
-public class Avatar extends Node {
+public class Avatar extends Node implements AnimEventListener{
 
     public Spatial avatarSpatial;
     private Node avatarNode;
@@ -114,7 +116,39 @@ public class Avatar extends Node {
        //rootNode.attachChild(this);
        
        }
+
+    public void onAnimCycleDone(AnimControl control, AnimChannel channel, String animName) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void onAnimChange(AnimControl control, AnimChannel channel, String animName) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
+    public void setAnim(String anim)
+    {
+        if(anim.equalsIgnoreCase("attack"))
+	{
+ 
+	    animChannel.setAnim(attackAnim,.3f);
+	    animChannel.setLoopMode(LoopMode.DontLoop);
+	    
+	}
+	else if(anim.equalsIgnoreCase("walk"))
+	{
+	           if (!animChannel.getAnimationName().equals(walkAnim)) {
+                animChannel.setAnim(walkAnim,.3f);
+		    animChannel.setLoopMode(LoopMode.Loop);
+            }
+		    
+		
+	}
+        else
+        {
+            animChannel.setAnim(idleAnim,.3f);
+		    animChannel.setLoopMode(LoopMode.Cycle);
+        }
+    }
     
     
 }

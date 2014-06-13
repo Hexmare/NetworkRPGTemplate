@@ -187,7 +187,7 @@ public class ModelState extends BaseAppState {
     {
         Spatial s = models.get(cs.getEntityId());
         Vector3f wd = new Vector3f();
-        
+        boolean walking = false;
         wd.set(0, 0, 0);
         
         Vector3f fd = ((Node)s).getChild(0).getWorldRotation().clone().mult(Vector3f.UNIT_Z);
@@ -198,20 +198,30 @@ public class ModelState extends BaseAppState {
 //        playerAvatar.avatarControl.getViewDirection()
         if (cs.isLeft()) {
             wd.addLocal(ld);
+            walking = true;
         }
         if (cs.isRight()) {
             wd.addLocal(ld.negate());
+            walking = true;
         }
         if (cs.isForward()) {
             wd.addLocal(fd);
+            walking = true;
         }
         if (cs.isBack()) {
             wd.addLocal(fd.negate());
+            walking = true;
         }
         //System.out.println(wd);
         //mainClass.entityData.setComponent(mainClass.entityId, new walkDirection(wd.multLocal(3.5f,0,3.5f)));
         ((Avatar)s).avatarControl.setWalkDirection(wd.mult(new Vector3f(3.5f,0,3.5f)));
-
+        if (walking) {
+           ((Avatar)s).setAnim("walk");
+        }
+        else
+        {
+            ((Avatar)s).setAnim("idle");
+        }
 
     }
     

@@ -49,13 +49,13 @@ public class WorldState extends BaseAppState {
         terrain.setShadowMode(RenderQueue.ShadowMode.Receive);
         bulletAppState.getPhysicsSpace().addAll(terrain);
         bulletAppState.setDebugEnabled(true);
-        DirectionalLight sun = new DirectionalLight();
-        sun.setDirection(new Vector3f(-.1f, -.7f, -1f));
-        rootNode.addLight(sun);
+        //DirectionalLight sun = new DirectionalLight();
+        //sun.setDirection(new Vector3f(-.1f, -.7f, -1f));
+        //rootNode.addLight(sun);
         
-        PointLight pl = new PointLight();
-        rootNode.addLight(pl);
-        pl.setPosition(new Vector3f(-6f,2f,-2f));
+        //PointLight pl = new PointLight();
+        //rootNode.addLight(pl);
+        //pl.setPosition(new Vector3f(-6f,2f,-2f));
         
         
     }
