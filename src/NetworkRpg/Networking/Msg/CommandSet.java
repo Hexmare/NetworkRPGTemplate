@@ -33,6 +33,10 @@ public class CommandSet extends AbstractMessage
         return right;
     }
     
+    public boolean isJumping() {
+        return jump;
+    }
+    
     public EntityId getEntityId() {
         return eid;
     }
@@ -41,13 +45,15 @@ public class CommandSet extends AbstractMessage
     private boolean back =false;
     private boolean left =false;
     private boolean right =false;
+    private boolean jump =false;
     private EntityId eid;
     
-    public CommandSet(EntityId ed,boolean  fwd, boolean rev, boolean lft, boolean rt) {
+    public CommandSet(EntityId ed,boolean  fwd, boolean rev, boolean lft, boolean rt, boolean jmp) {
         this.forward = fwd;
         this.back = rev;
         this.left = lft;
         this.right = rt;
+        this.jump = jmp;
         this.eid = ed;
     }
     

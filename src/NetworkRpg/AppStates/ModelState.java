@@ -212,6 +212,15 @@ public class ModelState extends BaseAppState {
             wd.addLocal(fd.negate());
             walking = true;
         }
+        if (cs.isJumping())
+        {
+            if (((Avatar)s).avatarControl.isOnGround()) {
+                ((Avatar)s).avatarControl.jump();
+                walking = false;
+            }
+            
+            
+        }
         //System.out.println(wd);
         //mainClass.entityData.setComponent(mainClass.entityId, new walkDirection(wd.multLocal(3.5f,0,3.5f)));
         ((Avatar)s).avatarControl.setWalkDirection(wd.mult(new Vector3f(3.5f,0,3.5f)));

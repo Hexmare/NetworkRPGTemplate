@@ -5,6 +5,7 @@
 package NetworkRpg.AppStates;
 
 //import SurviveES.Networking.ClientMain;
+import NetworkRpg.GameGuiController;
 import NetworkRpg.Main;
 import NetworkRpg.Networking.Util;
 import com.jme3.app.Application;
@@ -22,11 +23,17 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector4f;
+import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.control.BillboardControl;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Quad;
+import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.builder.EffectBuilder;
+import de.lessvoid.nifty.builder.PanelBuilder;
+import de.lessvoid.nifty.builder.PopupBuilder;
+import de.lessvoid.nifty.controls.console.builder.ConsoleBuilder;
 import org.lwjgl.opengl.Display;
 import tonegod.gui.controls.buttons.ButtonAdapter;
 import tonegod.gui.controls.extras.SpriteElement;
@@ -64,12 +71,24 @@ public class MainMenuState extends AbstractAppState{
     
     private float             measure;
     private boolean           firstTime;
+    
+    private NiftyJmeDisplay niftyDisplay;
+    private Nifty nifty;
+    private GameGuiController gameGuiController;
+    
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app); 
         this.app          = (Main) app;
         this.GUI = new MainMenuState();
-        startMenu();
+        this.stateManager = this.app.getStateManager();
+        niftyDisplay = new NiftyJmeDisplay(this.app.getAssetManager(), this.app.getInputManager(), this.app.getAudioRenderer(), this.app.getGuiViewPort());
+        nifty = niftyDisplay.getNifty();
+        app.getGuiViewPort().addProcessor(niftyDisplay);
+        nifty.loadControlFile("nifty-default-controls.xml");
+        this.app.getFlyByCamera().setEnabled(false);
+        niftyStartMenu();
+//        startMenu();
         
         //((Main)this.app).startNetworkingClient();
              //((ClientMain)this.app).startWorldManager();
@@ -77,6 +96,86 @@ public class MainMenuState extends AbstractAppState{
     
     public final AppStateManager getStateManager() {
         return app.getStateManager();
+    }
+    
+    public void niftyStartMenu(){
+        gameGuiController = new GameGuiController(app.getStateManager(),app);
+        registerConsolePopup(nifty);
+        nifty.fromXml("Interface/Nifty/hud.xml", "start", gameGuiController);
+    }
+    
+    public Nifty getNifty()
+    {
+        return nifty;
+    }
+    
+    private static void registerConsolePopup(Nifty nifty) {
+    new PopupBuilder("consolePopup") {
+
+      {
+        childLayoutAbsolute();
+        panel(new PanelBuilder() {
+
+          {
+            childLayoutCenter();
+            width("100%");
+            height("100%");
+            alignCenter();
+            valignCenter();
+            control(new ConsoleBuilder("console") {
+
+              {
+                width("80%");
+                lines(25);
+                alignCenter();
+                valignCenter();
+                onStartScreenEffect(new EffectBuilder("move") {
+
+                  {
+                    length(150);
+                    inherit();
+                    neverStopRendering(true);
+                    effectParameter("mode", "in");
+                    effectParameter("direction", "top");
+                  }
+                });
+                onEndScreenEffect(new EffectBuilder("move") {
+
+                  {
+                    length(150);
+                    inherit();
+                    neverStopRendering(true);
+                    effectParameter("mode", "out");
+                    effectParameter("direction", "top");
+                  }
+                });
+              }
+            });
+          }
+        });
+      }
+    }.registerPopup(nifty);
+  }
+    
+    public void connectToServer() {
+        System.out.println("Called Connect to Server");
+        try {
+                String player = "hexmare";
+                String host = "127.0.0.1";
+                int port = Util.tcpPort; 
+                ConnectionState cs = new ConnectionState(host, port, player);
+                //startSound.playInstance();
+                getStateManager().attach(cs);
+                ((Main) getStateManager().getApplication()).getFlyByCamera().setEnabled(true);
+                setEnabled(false);
+            } catch( Exception e ) {
+                //log.error("Connection Error", e);
+                
+                // Play the error sound and pop-up an error window
+                //errorSound.playInstance();
+                ErrorState error = new ErrorState("Connection Error", e.getMessage(), "dungeon");
+                getStateManager().attach(error);                
+            }
     }
     
     public void startMenu(){  
@@ -127,24 +226,24 @@ public class MainMenuState extends AbstractAppState{
                 //((Main)this.app).startNetworkingClient();
              //((Main)this.app).startWorldManager();
              
-             try {
-                String player = "hexmare";
-                String host = "127.0.0.1";
-                int port = Util.tcpPort; 
-                ConnectionState cs = new ConnectionState(host, port, player);
-                //startSound.playInstance();
-                getStateManager().attach(cs);
-                ((Main) getStateManager().getApplication()).getFlyByCamera().setEnabled(true);
-                setEnabled(false);
-            } catch( Exception e ) {
-                //log.error("Connection Error", e);
-                
-                // Play the error sound and pop-up an error window
-                //errorSound.playInstance();
-                ErrorState error = new ErrorState("Connection Error", e.getMessage(), "dungeon");
-                getStateManager().attach(error);                
-            }
-             
+//             try {
+//                String player = "hexmare";
+//                String host = "127.0.0.1";
+//                int port = Util.tcpPort; 
+//                ConnectionState cs = new ConnectionState(host, port, player);
+//                //startSound.playInstance();
+//                getStateManager().attach(cs);
+//                ((Main) getStateManager().getApplication()).getFlyByCamera().setEnabled(true);
+//                setEnabled(false);
+//            } catch( Exception e ) {
+//                //log.error("Connection Error", e);
+//                
+//                // Play the error sound and pop-up an error window
+//                //errorSound.playInstance();
+//                ErrorState error = new ErrorState("Connection Error", e.getMessage(), "dungeon");
+//                getStateManager().attach(error);                
+//            }
+             connectToServer();
              
              
              startMenu.hideWindow();
