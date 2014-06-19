@@ -1,6 +1,8 @@
 This is a Networking template that I have built Using JMonkey Engine 3, Zay-ES and Spider Monkey
 
-Major thanks to PSpeed , BigBawb, Toboi, ZZueg and Roah for all of your help.
+Major thanks to PSpeed , BigBawb, Toboi, ZZueg and Roah, Berzee for all of your help.
+
+( I consider help to be code examples as well as putting up with my idiotic questions in IRC ) 
 
 This project is Heavily based on the MonkeyTrap project by PSpeed, (http://hub.jmonkeyengine.org/forum/topic/monkey-trap/)
 
