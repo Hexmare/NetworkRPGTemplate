@@ -51,17 +51,11 @@ import com.simsilica.es.EntityData;
 import com.simsilica.es.EntityId;
 import com.simsilica.es.EntitySet;
 import com.simsilica.es.Filters;
-//import com.simsilica.lemur.event.BaseAppState;
 import java.io.IOException;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-//import trap.game.ModelType;
-//import trap.game.MonkeyTrapConstants;
-//import trap.game.Position;
-//import trap.net.TrapSerializers;
 import com.simsilica.es.net.EntitySerializers;
-//import trap.net.RemoteGameClient;
 
 
 /**
@@ -91,8 +85,8 @@ public class ConnectionState extends BaseAppState {
     public ConnectionState( String host, int port, String user ) throws IOException {
         // Create the connection right now to validate the 
         // info.  We'll actually start it later.
-        this.client = Network.connectToServer(GameConstants.GAME_NAME,
-                                              GameConstants.PROTOCOL_VERSION,
+        this.client = Network.connectToServer(Util.GAME_NAME,
+                                              Util.PROTOCOL_VERSION,
                                               host, port, port);
         this.user = user;                                         
     }

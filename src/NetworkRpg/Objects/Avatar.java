@@ -122,24 +122,6 @@ public class Avatar extends Node implements AnimEventListener{
         textNode.attachChild( label );
         model.attachChild(textNode);
 
-       //avatarSpatial = clientMain.getAssetManager().loadModel("Models/Sinbad/Sinbad.mesh.xml");
-       //this.attachChild(avatarSpatial);
-       //this.move(0f, 4f, 0f);
-       
-       //avatarSpatial.setLocalScale(.25f);
-       
-       
-       //avatarSpatial.addControl(avatarControl);
-       //avatarControl.warp(new Vector3f(-5f,25f,-5f));
-       //bulletAppState.getPhysicsSpace().add(avatarControl);
-       //bulletAppState.getPhysicsSpace().addAll(avatarSpatial);
-       
-       
-       
-       //anim = new AnimationManager();
-       //anim.animationInit(monster.Model);
-       
-       //rootNode.attachChild(this);
        
        }
 

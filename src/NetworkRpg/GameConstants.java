@@ -34,10 +34,9 @@
 
 package NetworkRpg;
 
-import NetworkRpg.Components.ArmorStrength;
-import NetworkRpg.Components.CombatStrength;
+
 import NetworkRpg.Components.ModelType;
-import NetworkRpg.Components.Speed;
+
 //import trap.game.ai.AiType;
 
 
@@ -47,43 +46,9 @@ import NetworkRpg.Components.Speed;
  */
 public class GameConstants {
  
-    public static final String GAME_NAME = "Monkey Trap";
-    public static final int PROTOCOL_VERSION = 1;
-    public static final int DEFAULT_PORT = 4284;
+
  
-    public static final double MONKEY_MOVE_SPEED = 4.0; // m/sec
-    public static final double OGRE_MOVE_SPEED = 3.0; // m/sec
-    public static final double MONKEY_TURN_SPEED = 2.5; // rotations/sec, 90 degrees in 100 ms
-    public static final double OGRE_TURN_SPEED = 1.25; // rotations/sec, 90 degrees in 200 ms
- 
-    public static final int MONKEY_HITPOINTS = 25;
-    public static final int OGRE_HITPOINTS = 15;
-    public static final int CHEST_HITPOINTS = 5;
-    public static final int BARREL_HITPOINTS = 1;
- 
-    public static final CombatStrength OGRE_COMBAT = new CombatStrength(1, 1, 3);
-    public static final ArmorStrength OGRE_ARMOR = new ArmorStrength(1); 
-        
-    public static final Speed SPEED_MONKEY = new Speed(MONKEY_MOVE_SPEED, MONKEY_TURN_SPEED);
-    public static final Speed SPEED_OGRE = new Speed(OGRE_MOVE_SPEED, OGRE_TURN_SPEED);
-    
-    public static final ModelType TYPE_MONKEY = new ModelType("Monkey");
+
     public static final ModelType TYPE_OGRE = new ModelType("Ogre");
-    public static final ModelType TYPE_BARRELS = new ModelType("Barrel");
-    public static final ModelType TYPE_CHEST = new ModelType("Chest");
-    public static final ModelType TYPE_BANANA = new ModelType("Banana");
-    public static final ModelType TYPE_RING1 = new ModelType("Ring1");
-    public static final ModelType TYPE_RING2 = new ModelType("Ring2");
-    public static final ModelType TYPE_RING3 = new ModelType("Ring3");
-    public static final ModelType TYPE_RING4 = new ModelType("Ring4");
-    public static final ModelType TYPE_POTION1 = new ModelType("Potion1");
-    public static final ModelType TYPE_POTION2 = new ModelType("Potion2");
-    public static final ModelType TYPE_POTION3 = new ModelType("Potion3");
-    public static final ModelType TYPE_POTION4 = new ModelType("Potion4");
-    
-    
-    public static final ModelType TYPE_BLING = new ModelType("Bling");
-    
-    //public static final AiType AI_DRUNK = new AiType("Drunk");
-    //public static final AiType AI_SURVEY = new AiType("Survey");
+
 }

@@ -39,7 +39,6 @@ import NetworkRpg.AppStates.ModelState;
 import NetworkRpg.Networking.Msg.ChatMessage;
 import NetworkRpg.Networking.Msg.CommandSet;
 import NetworkRpg.Networking.Msg.GameTimeMessage;
-import NetworkRpg.Networking.Msg.HelloMessage;
 import NetworkRpg.Networking.Msg.PlayerInfoMessage;
 import NetworkRpg.Networking.Msg.ViewDirection;
 import com.jme3.app.SimpleApplication;
@@ -50,14 +49,7 @@ import com.simsilica.es.EntityId;
 import com.simsilica.es.net.ObjectMessageDelegator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-//import trap.GameClient;
-//import trap.game.Direction;
-//import trap.game.Maze;
-//import trap.game.TimeProvider;
-//import trap.net.msg.GameTimeMessage;
-//import trap.net.msg.MazeDataMessage;
-//import trap.net.msg.MoveMessage;
-//import trap.net.msg.PlayerInfoMessage;
+
 
 /**
  *
@@ -70,9 +62,7 @@ public class RemoteGameClient implements GameClient {
     private String playerName;
     private EntityId player;
     private RemoteEntityData ed;
-    //private Maze maze;
     private long frameDelay = 200 * 1000000L; // 200 ms 
-    //private long frameDelay = 500 * 1000000L; // 500 ms 
     private long renderTime;
     private long serverTimeOffset;
     private long pingDelay = 500 * 1000000L; // 500 ms  
@@ -81,7 +71,6 @@ public class RemoteGameClient implements GameClient {
     //private Direction lastDir;
     private long lastTime;
     private SimpleApplication app;
-    private ThirdPersonPlayerNode tpn;
     private ThirdPersonCamera camera;
     
     public RemoteGameClient(String playerName, Client client, int entityChannel, SimpleApplication a) {
@@ -128,25 +117,6 @@ public class RemoteGameClient implements GameClient {
         return ed;
     }
 
-    //public Maze getMaze() {
-    //    return maze;
-    //}
-
-    /*
-     public void move( Direction dir ) {
-     System.out.println( "Want to move:" + dir );
-     long now = getGameTime();
-     long interval = 50 * 1000000L; // 50 ms
-     if( dir != lastDir || lastTime < now + interval ) {
-     lastDir = dir;
-     lastTime = now;
-     client.send(new MoveMessage(dir).setReliable(true));
-     }
-     //throw new UnsupportedOperationException("Not supported yet.");
-     }
-    
-    * 
-    */
     
      protected void playerInfo( PlayerInfoMessage msg ) {
         System.out.println( "playerInfo(" + msg + ")" );
@@ -162,12 +132,7 @@ public class RemoteGameClient implements GameClient {
          }
      }
 
-     /*
-     protected void mazeData( MazeDataMessage msg ) {
-     System.out.println( "mazeData(" + msg + ")" );
-     maze = new Maze(msg.getWidth(), msg.getHeight(), msg.getCells()); 
-     }
-     */
+
     protected void gameTime(GameTimeMessage msg) {
         //System.out.println( "gameTime:" + msg );
         if (msg.getTime() != msg.getSentTime()) {
@@ -187,14 +152,7 @@ public class RemoteGameClient implements GameClient {
     }
     
     
-    protected void hm( HelloMessage msg ) {
-        // Send the latest game time back
-        //long time = systems.getGameTime();
-        //conn.send(msg.updateGameTime(time).setReliable(true));
-        
-        System.out.println(((HelloMessage)msg).getMessage());
-        
-    }
+
 
     protected void sendPing() {
         // Send our latest time and let the server ping us back        

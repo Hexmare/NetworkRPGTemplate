@@ -13,8 +13,6 @@ import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
-import com.jme3.bullet.BulletAppState;
-import com.jme3.input.FlyByCamera;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.builder.EffectBuilder;
@@ -24,9 +22,6 @@ import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.Window;
 import de.lessvoid.nifty.controls.console.builder.ConsoleBuilder;
-import de.lessvoid.nifty.elements.Element;
-import de.lessvoid.nifty.examples.controls.chatcontrol.ChatControlDialogDefinition;
-import de.lessvoid.nifty.examples.controls.common.DialogPanelControlDefinition;
 import de.lessvoid.nifty.screen.Screen;
 
 
@@ -40,8 +35,7 @@ public class MainMenuState extends AbstractAppState{
     public  AssetManager      assetManager;   
     
     private AppStateManager   stateManager;
-    private BulletAppState    physics;
-    private FlyByCamera       flyCam;
+
     
     public  Screen            screen;
     public  Window            startMenu;
@@ -49,14 +43,7 @@ public class MainMenuState extends AbstractAppState{
     public  Window            handMenu;
     public  Window            HUD;
     public  Window            EndMenu;
-    private String            inventoryCount;
-    private Element           killDisplay;
-    private Element           healthBar;
-    private Element           ammoDisplay;
-    
-    private Element           finalKills;
-    private Element           finalAccuracy;
-    //private SpriteElement              heartSprite;
+
     private String playerName;
     private String serverHost;
     
@@ -78,14 +65,8 @@ public class MainMenuState extends AbstractAppState{
         nifty = niftyDisplay.getNifty();
         app.getGuiViewPort().addProcessor(niftyDisplay);
         nifty.loadControlFile("nifty-default-controls.xml");
-        ChatControlDialogDefinition.register(nifty);
-        DialogPanelControlDefinition.register(nifty);
         this.app.getFlyByCamera().setEnabled(false);
         niftyStartMenu();
-//        startMenu();
-        
-        //((Main)this.app).startNetworkingClient();
-             //((ClientMain)this.app).startWorldManager();
     }
     
     public final AppStateManager getStateManager() {

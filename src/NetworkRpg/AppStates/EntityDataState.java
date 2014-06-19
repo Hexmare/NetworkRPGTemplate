@@ -37,7 +37,6 @@ package NetworkRpg.AppStates;
 import com.jme3.app.Application;
 import com.simsilica.es.EntityData;
 import com.simsilica.es.base.DefaultEntityData;
-//import com.simsilica.lemur.event.BaseAppState;
 
 
 /**

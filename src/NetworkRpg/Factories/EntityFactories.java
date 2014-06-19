@@ -34,11 +34,7 @@
 
 package NetworkRpg.Factories;
 
-import NetworkRpg.Components.Activity;
-import NetworkRpg.Components.ArmorStrength;
-import NetworkRpg.Components.CombatStrength;
-import NetworkRpg.Components.HitPoints;
-import NetworkRpg.Components.MaxHitPoints;
+
 import NetworkRpg.Components.ModelType;
 import NetworkRpg.Components.Position;
 import NetworkRpg.GameConstants;
@@ -61,47 +57,7 @@ public class EntityFactories {
     public static void initialize( EntityData ed ) {
         EntityFactories.ed = ed;                
     }
-    /*
-    public static EntityId createCollision( EntityId e1, ModelType type1, 
-                                            EntityId e2, ModelType type2,
-                                            long time, long decayLength, 
-                                            EntityComponent... adds ) {
-        Collision collision = new Collision(time, e1, type1, e2, type2);
-        Decay decay = new Decay(time + decayLength);
-        
-        EntityId e = ed.createEntity();
-        ed.setComponents(e, collision, decay);
-        if( adds != null && adds.length > 0 ) {
-            ed.setComponents(e, adds);
-        }
-        return e;                                                     
-    }
     
-    public static EntityId createBuff( long time, EntityId target, 
-                                       EntityComponent... adds ) {
-        EntityId e = ed.createEntity();
-        ed.setComponent(e, new Buff(target, time));
-        if( adds != null && adds.length > 0 ) {
-            ed.setComponents(e, adds);
-        } else {
-            throw new IllegalArgumentException( "Buff entity created with no extra components." );
-        }
-        return e;                                                       
-    }
-
-    public static EntityId createItemBuff( EntityId target, long decay,  
-                                           EntityComponent... adds ) {
-        EntityId e = ed.createEntity();
-        ed.setComponent(e, new ItemBuff(target, decay));
-        if( adds != null && adds.length > 0 ) {
-            ed.setComponents(e, adds);
-        } else {
-            throw new IllegalArgumentException( "ItemBuff entity created with no extra components." );
-        }
-        return e;                                                       
-    }
-    
-    * */
     
     public static EntityId createObject( long time, Vector3f loc, 
                                          EntityComponent... adds ) {
@@ -145,24 +101,7 @@ public class EntityFactories {
         // Now setup the rest... could use templates or factories or some combo       
         
         if( GameConstants.TYPE_OGRE.equals(type) ) {
-            ed.setComponents(e, new Activity(Activity.SPAWNING, time, time + 2000 * 1000000L),
-                                //GameConstants.AI_SURVEY,
-                                GameConstants.SPEED_OGRE,
-                                GameConstants.OGRE_COMBAT,
-                                GameConstants.OGRE_ARMOR, 
-                                new HitPoints(GameConstants.OGRE_HITPOINTS), 
-                                new MaxHitPoints(GameConstants.OGRE_HITPOINTS));
-        } else if( GameConstants.TYPE_MONKEY.equals(type) ) {
-            ed.setComponents(e, new Activity(Activity.SPAWNING, time, time + 2000 * 1000000L),
-                                GameConstants.SPEED_MONKEY,
-                                new CombatStrength(),
-                                new ArmorStrength(), 
-                                new HitPoints(GameConstants.MONKEY_HITPOINTS), 
-                                new MaxHitPoints(GameConstants.MONKEY_HITPOINTS));
-        } else if( GameConstants.TYPE_CHEST.equals(type) ) {
-            ed.setComponents(e, new HitPoints(GameConstants.CHEST_HITPOINTS)); 
-        } else if( GameConstants.TYPE_BARRELS.equals(type) ) {
-            ed.setComponents(e, new HitPoints(GameConstants.BARREL_HITPOINTS)); 
+            ed.setComponents(e);
         } else {
             // Assume there is no more
         }

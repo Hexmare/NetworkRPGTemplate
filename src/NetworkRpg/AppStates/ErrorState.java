@@ -35,10 +35,7 @@
 package NetworkRpg.AppStates;
 
 import com.jme3.app.Application;
-import com.jme3.app.SimpleApplication;
-import com.jme3.math.ColorRGBA;
-import com.jme3.math.Vector3f;
-import com.jme3.renderer.Camera;
+
 //import com.simsilica.lemur.Button;
 //import com.simsilica.lemur.Command;
 //import com.simsilica.lemur.Container;

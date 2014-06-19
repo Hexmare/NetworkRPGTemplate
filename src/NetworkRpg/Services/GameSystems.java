@@ -43,7 +43,6 @@ import java.util.*;
 import java.util.concurrent.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-//import trap.game.ai.AiService;
 
 
 /**
@@ -65,21 +64,8 @@ public class GameSystems {
     
     public GameSystems(SimpleApplication a) {        
         this.app = a;
-        // Setup the Monkey Trap services
         services.add(new EntityDataService());
-        //services.add(new DecayService());
-        //services.add(new MazeService(48, 48));
-        //services.add(new SpawnService(15));
-        //services.add(new AiService());        
-        
-        //Removed this from servicses. Instead this should be taken care of in MovementAppState on server
         services.add(new MovementService());
-        //services.add(new ItemPickupService());
-        //services.add(new CombatBuffService());
-        //services.add(new CombatInitiativeService());
-        //services.add(new HealthService());
-        //services.add(new LootService());
-
         gameTime = new GameTimeProvider();     
         serviceRunner = new ServiceRunnable();
     }

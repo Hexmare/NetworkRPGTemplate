@@ -90,7 +90,7 @@ public class GameGuiController extends AbstractAppState implements ScreenControl
 //        consoleCommands.registerCommand("show TextField", showCommand);
 //        consoleCommands.registerCommand("show Slider", showCommand);
 //        consoleCommands.registerCommand("show ScrollPanel", showCommand);
-        consoleCommands.registerCommand("show ChatControl", showCommand);
+        //consoleCommands.registerCommand("show ChatControl", showCommand);
 //        consoleCommands.registerCommand("show DragAndDrop", showCommand);
 
         NiftyCommand niftyCommand = new NiftyCommand();
@@ -201,21 +201,7 @@ public class GameGuiController extends AbstractAppState implements ScreenControl
         //System.out.println("update");
     }
 
-    public void onClick() {
-        //Element niftyElement = nifty.getCurrentScreen().findElementByName("Clickable");
 
-        //NiftyImage image;
-        System.out.println("On Clicke event");
-        /*
-         * This is the stuff for setting and chaning subimage
-         * imageMode="subImage:10,10,32,32"
-         image = niftyElement.getRenderer(ImageRenderer.class).getImage();
-         image.getImageMode().setParameters("subImage:30,30,32,32");
-         //screen.findElementByName("elementId");
-         System.out.println("Clicked!");
-         */
-        signal = true;
-    }
 
     public void toggleCrosshairs() {
         System.out.println("Cross Hairs toggle");
@@ -247,7 +233,11 @@ public class GameGuiController extends AbstractAppState implements ScreenControl
     {
         TextField inputBox = screen.findNiftyControl("text_input", TextField.class);
 //        System.out.println(inputBox.getText());
-        ChatMessage cm = new ChatMessage(stateManager.getState(MainMenuState.class).getPlayerName() + " : " + inputBox.getText());
+        String message = inputBox.getText();
+        if ("".equals(message)) {
+            return;
+        }
+        ChatMessage cm = new ChatMessage(stateManager.getState(MainMenuState.class).getPlayerName() + " : " + message);
         //stateManager.getState(MainMenuState.class).processChatMessage(cm);
         stateManager.getState(ConnectionState.class).getClient().send(cm);
                 

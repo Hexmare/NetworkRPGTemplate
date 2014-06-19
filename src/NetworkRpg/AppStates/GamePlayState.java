@@ -51,19 +51,13 @@ import com.simsilica.es.EntityData;
 import com.simsilica.es.EntitySet;
 import com.simsilica.es.Filters;
 import com.simsilica.es.Name;
-//import com.simsilica.lemur.event.BaseAppState;
 import java.util.ArrayList;
 import java.util.List;
-import NetworkRpg.Components.ArmorStrength;
-import NetworkRpg.Components.CombatStrength;
-import NetworkRpg.Components.HitPoints;
-import NetworkRpg.Components.MaxHitPoints;
-//import NetworkRpg.Components.Maze;
+
 import NetworkRpg.Components.ModelType;
-import NetworkRpg.Factories.TrapModelFactory;
+import NetworkRpg.Factories.GameModelFactory;
 import NetworkRpg.GameClient;
 import NetworkRpg.GameConstants;
-import NetworkRpg.ThirdPersonCamera;
 import NetworkRpg.TimeProvider;
 
 
@@ -100,36 +94,23 @@ public class GamePlayState extends BaseAppState {
         
         // Setup the audio environment... here for now              
         app.getAudioRenderer().setEnvironment(Environment.Closet);
-        
-        //Effects.initialize(client.getRenderTimeProvider(), app.getAssetManager());
- 
+         
         // Grab some client properties that we will need for
-        // our client-side states.       
-        //Maze maze = client.getMaze();
+
         EntityData ed = client.getEntityData(); 
 
         TimeProvider time = client.getRenderTimeProvider(); 
 
         gameStates.add(new EntityDataState(ed));
         gameStates.add(new WorldState());
-        gameStates.add(new ModelState(time, new TrapModelFactory((SimpleApplication)app, audioListener, time),ed,false));
-        //gameStates.add(new CharacterAnimState());
-        //gameStates.add(new DeathState(time));
-        //gameStates.add(new MazeState(maze));
-        //gameStates.add(new PlayerState(client, audioListener));
+        gameStates.add(new ModelState(time, new GameModelFactory((SimpleApplication)app, audioListener, time),ed,false));
         gameStates.add(new PlayerState(client));
-        //gameStates.add(new HudState());
-   
-        //gameStates.add(new FlyCamAppState());
+
  
  
         // We only care about the monkeys...
-        ComponentFilter filter = Filters.fieldEquals(ModelType.class, 
-                                                     "type", 
-                                                     GameConstants.TYPE_MONKEY.getType());
-        players = ed.getEntities(filter, ModelType.class, Name.class, 
-                                         HitPoints.class, MaxHitPoints.class,
-                                         CombatStrength.class, ArmorStrength.class);
+        ComponentFilter filter = Filters.fieldEquals(ModelType.class, "type", GameConstants.TYPE_OGRE.getType());
+        players = ed.getEntities(filter, ModelType.class, Name.class);
         
         
         // Attach all of the child states
@@ -159,9 +140,6 @@ public class GamePlayState extends BaseAppState {
 
     @Override
     protected void enable() {
-        //getState(MusicState.class).setSong("Sounds/ambient-theme.ogg", 1);
-        //getState(MusicState.class).setVolume(0.5f);
-
         Node rootNode = ((SimpleApplication)getApplication()).getRootNode(); 
  
         /** A white, directional light source */

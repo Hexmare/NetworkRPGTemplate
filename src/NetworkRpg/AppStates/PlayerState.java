@@ -36,9 +36,6 @@ package NetworkRpg.AppStates;
 import NetworkRpg.GameClient;
 import NetworkRpg.Main;
 import NetworkRpg.Networking.Msg.CommandSet;
-//import trap.game.Direction;
-//import trap.game.Position;
-//import trap.game.SensorArea;
 import com.jme3.app.Application;
 import com.jme3.audio.Listener;
 import com.jme3.bullet.BulletAppState;
@@ -61,13 +58,7 @@ import com.simsilica.es.EntityId;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 
-import org.lwjgl.opengl.DisplayMode;
 
-//import com.simsilica.lemur.GuiGlobals;
-//import com.simsilica.lemur.event.BaseAppState;
-//import com.simsilica.lemur.input.AnalogFunctionListener;
-//import com.simsilica.lemur.input.FunctionId;
-//import com.simsilica.lemur.input.InputMapper;
 
 /**
  *
@@ -155,27 +146,6 @@ public class PlayerState extends BaseAppState implements ActionListener, AnalogL
         inputManager.addListener(this, "enter");
 
 
-        /*
-         InputMapper inputMapper = GuiGlobals.getInstance().getInputMapper();
-         inputMapper.addAnalogListener(this,
-         PlayerFunctions.F_NORTH,
-         PlayerFunctions.F_SOUTH,
-         PlayerFunctions.F_EAST,
-         PlayerFunctions.F_WEST);
- 
-         cameraAngle = new Quaternion().fromAngles(FastMath.QUARTER_PI * 1.3f, FastMath.PI, 0);
-         cameraDelta = cameraAngle.mult(Vector3f.UNIT_Z);
-         cameraDelta.multLocal(-cameraDistance);
-
-         audioListener.setRotation(cameraAngle);
-         audioDelta = cameraAngle.mult(Vector3f.UNIT_Z);
-         audioDelta.multLocal(4);        
-        
-         // Back it up a little so the framing is more even
-         cameraDelta.addLocal(0, -1, 0);
-        
-         sensor = new SensorArea(getState(MazeState.class).getMaze(), 4);       
-         * */
     }
 
     public void onAction(String binding, boolean value, float tpf) {
@@ -229,7 +199,6 @@ public class PlayerState extends BaseAppState implements ActionListener, AnalogL
                 ((Main)getApplication()).setIsFullScreen(!isFullScreen);
                 getApplication().setSettings(newAppSettings);
                 getApplication().restart();
-                //toggleToFullscreen();
             }
 
 
@@ -252,18 +221,7 @@ public class PlayerState extends BaseAppState implements ActionListener, AnalogL
         }
     }
 
-    public void toggleToFullscreen() {
-        AppSettings settings = new AppSettings(false);
-        GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        java.awt.DisplayMode[] modes = device.getDisplayModes();
-        int i=0; // note: there are usually several, let's pick the first
-        settings.setResolution(modes[i].getWidth(),modes[i].getHeight());
-        settings.setFrequency(modes[i].getRefreshRate());
-        settings.setBitsPerPixel(modes[i].getBitDepth());
-        settings.setFullscreen(device.isFullScreenSupported());
-        getApplication().setSettings(settings);
-        getApplication().restart(); // restart the context to apply changes
-      }
+
     
     @Override
     protected void cleanup(Application app) {
@@ -279,93 +237,18 @@ public class PlayerState extends BaseAppState implements ActionListener, AnalogL
             networkClient.send(cs);
             getApplication().getStateManager().getState(ModelState.class).setAvatarCommand(cs);
         }
-        /*
-         Position pos = ed.getComponent(player, Position.class);
-
-         if( interpNode != null ) {
- 
-         if( pos != lastPos ) {
-         lastPos = pos;
-         if( pos != null ) {
-         interpNode.getControl(InterpolationControl.class).setTarget(pos.getLocation(), pos.getFacing(), pos.getChangeTime(), pos.getTime());
-         }
-         }
-            
-         // Make sure it is up to date
-         interpNode.updateLogicalState(tpf);
         
-         Vector3f loc = cam.getLocation();
-         loc.set(interpNode.getLocalTranslation());
-         loc.addLocal(cameraDelta);
-         cam.setLocation(loc);
- 
-         loc = audioListener.getLocation(); 
-         loc.set(interpNode.getLocalTranslation());
-         loc.addLocal(audioDelta);
-         audioListener.setLocation(loc);
-         }                
-        
-         if( pos != null ) {        
-         Vector3f loc = pos.getLocation();
-            
-         int x = (int)loc.x / 2; 
-         int y = (int)loc.z / 2;
-            
-         if( x != xLast || y != yLast ) {
-         xLast = x;
-         yLast = y;
-         sensor.setCenter(x, y);
- 
-         getState(MazeState.class).clearVisibility(MazeState.PLAYER_VISIBLE);
-         getState(MazeState.class).setVisibility(sensor, MazeState.PLAYER_VISIBLE | MazeState.PLAYER_VISITED); 
-         }            
-         }       
-        
-         */
     }
 
     @Override
     protected void enable() {
-        /*
-         InputMapper inputMapper = GuiGlobals.getInstance().getInputMapper();    
-         inputMapper.activateGroup(PlayerFunctions.GROUP);
-        
-         // Create a node that we will use for interpolation... this
-         // way we get to reuse the interpolation control.
-         interpNode = new Node("interp");
-         Position pos = ed.getComponent(player, Position.class);
-         if( pos != null ) {
-         interpNode.setLocalTranslation(pos.getLocation().mult(2));
-         }
-         interpNode.addControl(new InterpolationControl(client.getRenderTimeProvider()));
- 
-         Camera cam = getApplication().getCamera();       
-         cam.setRotation(cameraAngle);
-         */
+       
     }
 
     @Override
     protected void disable() {
-        /*
-         InputMapper inputMapper = GuiGlobals.getInstance().getInputMapper();    
-         inputMapper.deactivateGroup(PlayerFunctions.GROUP);
-         */
+
     }
 
-    /*
-     public void valueActive( FunctionId func, double value, double tpf ) {
-     if( Math.abs(value) < 0.5 ) {
-     return;
-     }
-        
-     if( func == PlayerFunctions.F_NORTH ) {
-     client.move(Direction.North);
-     } else if( func == PlayerFunctions.F_SOUTH ) {
-     client.move(Direction.South);
-     } else if( func == PlayerFunctions.F_EAST ) {
-     client.move(Direction.East);
-     } else if( func == PlayerFunctions.F_WEST ) {
-     client.move(Direction.West);
-     }
-     }*/
+    
 }

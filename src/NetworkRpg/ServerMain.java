@@ -1,24 +1,18 @@
 package NetworkRpg;
 
 import NetworkRpg.AppStates.ModelState;
-import NetworkRpg.AppStates.MovementAppState;
 import NetworkRpg.AppStates.WorldState;
-import NetworkRpg.Factories.TrapModelFactory;
+import NetworkRpg.Factories.GameModelFactory;
 import NetworkRpg.Handlers.GameMessageHandler;
 import NetworkRpg.Networking.Util;
 import NetworkRpg.Services.GameSystems;
 import NetworkRpg.Services.Service;
 import com.jme3.app.SimpleApplication;
-import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
-import com.jme3.math.Vector3f;
 import com.jme3.network.ConnectionListener;
 import com.jme3.network.HostedConnection;
 import com.jme3.network.Network;
 import com.jme3.network.Server;
 import com.jme3.renderer.RenderManager;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.shape.Box;
 import com.jme3.system.JmeContext;
 import com.simsilica.es.net.EntitySerializers;
 import com.simsilica.es.server.EntityDataHostService;
@@ -28,8 +22,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * test
- * @author normenhansen
+ * ServerMain
+ * @author Hexmare
  */
 public class ServerMain extends SimpleApplication {
     
@@ -50,7 +44,6 @@ public class ServerMain extends SimpleApplication {
         ServerMain app = new ServerMain();
         app.setPauseOnLostFocus(false);
         app.start(JmeContext.Type.Headless);
-        //app.start();
     }
 
     @Override
@@ -59,15 +52,15 @@ public class ServerMain extends SimpleApplication {
         
         try {
             // Create the network hosting connection
-            host = Network.createServer(GameConstants.GAME_NAME, 
-                                        GameConstants.PROTOCOL_VERSION,
+            host = Network.createServer(Util.GAME_NAME, 
+                                        Util.PROTOCOL_VERSION,
                                         Util.tcpPort, Util.udpPort);
         } catch (IOException ex) {
             Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
         }
                                     
-        System.out.println("Adding channel 0 on port:" + (port+1));                                    
-        host.addChannel(port+1);
+        System.out.println("Adding channel 0 on port:" + (Util.tcpPort+1));                                    
+        host.addChannel(Util.tcpPort+1);
  
         // Add our own stub service to send updates at the end of
         // the game update cycle
@@ -92,7 +85,7 @@ public class ServerMain extends SimpleApplication {
         TimeProvider time = systems.getGameTimeProvider();
         
         getStateManager().attach(new WorldState());
-        getStateManager().attach(new ModelState(time, new TrapModelFactory(this, null, time),systems.getEntityData(),true));
+        getStateManager().attach(new ModelState(time, new GameModelFactory(this, null, time),systems.getEntityData(),true));
         //getStateManager().attach(new MovementAppState(systems.getEntityData(),systems));
         // Will delegate certain messages to the GameMessageHandler for
         // a particular connection.

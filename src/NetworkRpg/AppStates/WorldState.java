@@ -4,16 +4,12 @@
  */
 package NetworkRpg.AppStates;
 
-import NetworkRpg.Main;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
-import com.jme3.light.DirectionalLight;
-import com.jme3.light.PointLight;
-import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -35,11 +31,9 @@ public class WorldState extends BaseAppState {
         
         
         Spatial sceneModel = getApplication().getAssetManager().loadModel("Scenes/scene1.j3o");     
-        //sceneModel.scale(1f,.5f,1f); //Make scenery short enough to jump on. =P
         CollisionShape sceneShape = CollisionShapeFactory.createMeshShape((Node) sceneModel);
 	RigidBodyControl scene = new RigidBodyControl(sceneShape, 0);
 	sceneModel.addControl(scene);
-        //rootNode.attachChild(sceneModel);
 	bulletAppState.getPhysicsSpace().add(scene);
         Node sceneNode = new Node("scene node");
         rootNode.attachChild(sceneNode);

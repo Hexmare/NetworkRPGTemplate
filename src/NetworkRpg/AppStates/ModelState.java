@@ -58,14 +58,13 @@ import com.simsilica.es.EntityData;
 import com.simsilica.es.EntityId;
 import com.simsilica.es.EntitySet;
 import com.simsilica.es.Name;
-//import com.simsilica.lemur.event.BaseAppState;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-//import trap.game.TimeProvider;
+
 
 
 /**
@@ -164,15 +163,11 @@ public class ModelState extends BaseAppState {
 
     protected void updateModelSpatial( Entity e, Spatial s ) {
         Position p = e.get(Position.class);
-        //InterpolationControl ic = s.getControl(InterpolationControl.class);
-        //if( ic != null ) {
-        //    ic.setTarget(p.getLocation(), p.getFacing(), p.getChangeTime(), p.getTime());
-        //} else {        
+    
         
         ModelType mt = e.get(ModelType.class);
         if (mt != null && mt.getType().equalsIgnoreCase("ogre")) {
-            //s.getControl(BetterCharacterControl.class).warp(p.getLocation());
-            //System.out.println("Updating Position");
+
             Name nm =  e.get(Name.class);
 
             if (this.isServer == false) {
@@ -184,11 +179,10 @@ public class ModelState extends BaseAppState {
         }
         else
         { 
-            //s.setLocalTranslation(p.getLocation());
-            //s.setLocalRotation(p.getFacing());
+
         }
             
-        //}
+
     }
     
     protected void updateNames( Set<Entity> set ) {
@@ -196,7 +190,6 @@ public class ModelState extends BaseAppState {
         for( Entity e : set ) {
             Spatial s = models.get(e.getId());
             Name nm =  e.get(Name.class);
-            //((Avatar)s).setPlayerName("hexmare");
             if (!isServer) {
                 if (nm != null) {
                     ((Avatar)s).setPlayerName(nm.getName());
@@ -216,10 +209,7 @@ public class ModelState extends BaseAppState {
         
         Vector3f fd = ((Node)s).getChild(0).getWorldRotation().clone().mult(Vector3f.UNIT_Z);
         Vector3f ld = ((Node)s).getChild(0).getWorldRotation().clone().mult(Vector3f.UNIT_X);
-//        Vector3f fd = playerAvatar.avatarControl.getViewDirection().clone().mult(Vector3f.UNIT_Z);
-//        Vector3f ld = playerAvatar.avatarControl.getViewDirection().clone().mult(Vector3f.UNIT_X);
-        //System.out.println(fd);
-//        playerAvatar.avatarControl.getViewDirection()
+
         if (cs.isLeft()) {
             wd.addLocal(ld);
             walking = true;
@@ -243,8 +233,6 @@ public class ModelState extends BaseAppState {
                 walking = false;
             }  
         }
-        //System.out.println(wd);
-        //mainClass.entityData.setComponent(mainClass.entityId, new walkDirection(wd.multLocal(3.5f,0,3.5f)));
         ((Avatar)s).avatarControl.setWalkDirection(wd.mult(new Vector3f(3.5f,0,3.5f)));
         if (walking) {
            ((Avatar)s).setAnim("walk");
@@ -266,7 +254,6 @@ public class ModelState extends BaseAppState {
     
     public void setAvatarDirection(String dir,float value,float tpf)
     {
-        //System.out.println("setting direction");
         if (dir.equals("TurnLeft"))
 	{
             Quaternion turn = new Quaternion();
@@ -326,7 +313,6 @@ public class ModelState extends BaseAppState {
         factory.setState(this);
 
         // Grab the set of entities we are interested in
-        //ed = getState(EntityDataState.class).getEntityData();
         entities = ed.getEntities(Position.class, ModelType.class);
         nameSet = ed.getEntities(Name.class);
         // Create a root for all of the models we create
@@ -341,7 +327,6 @@ public class ModelState extends BaseAppState {
     @Override
     protected void cleanup( Application app ) {
 
-        // Release the entity set we grabbed previously
         entities.release();
         entities = null;
     }
