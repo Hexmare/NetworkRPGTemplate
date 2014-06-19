@@ -34,7 +34,7 @@
 
 package NetworkRpg.Components;
 
-import com.jme3.math.Quaternion;
+
 import com.jme3.math.Vector3f;
 import com.simsilica.es.EntityComponent;
 
@@ -47,7 +47,7 @@ import com.simsilica.es.EntityComponent;
  */
 public class Position implements EntityComponent {
     private Vector3f location;
-    private Quaternion facing;
+    private Vector3f facing;
     private long startTime;
     private long endTime;
     
@@ -55,31 +55,23 @@ public class Position implements EntityComponent {
     }
 
     public Position( Vector3f location, long startTime, long endTime ) {
-        this(location, new Quaternion(), startTime, endTime);
+        this(location, new Vector3f(), startTime, endTime);
     }
 
-    public Position( Vector3f location, Direction facing, long startTime, long endTime ) {
-        this(location, facing.getFacing(), startTime, endTime);
-    }
     
-    public Position( Vector3f location, Quaternion facing, long startTime, long endTime ) {
+    
+    public Position( Vector3f location, Vector3f facing, long startTime, long endTime ) {
         this.location = location;
         this.facing = facing;
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
-    public Position newDirection( Direction dir, long startTime, long endTime ) {
-        return new Position(location, dir, startTime, endTime);
-    }
+    
 
-    public Position newLocation( Vector3f location, long startTime, long endTime ) {
-        return new Position(location, facing, startTime, endTime);
-    }
+    
 
-    public Position newTime( long startTime, long endTime ) {
-        return new Position(location, facing, startTime, endTime);
-    }
+    
 
     public long getTime() {
         return endTime;
@@ -93,7 +85,7 @@ public class Position implements EntityComponent {
         return location;
     }
 
-    public Quaternion getFacing() {
+    public Vector3f getFacing() {
         return facing;
     }
 

@@ -34,8 +34,7 @@
 
 package NetworkRpg.AppStates;
 
-//import trap.game.Position;
-//import trap.game.ModelType;
+
 import NetworkRpg.Components.ModelType;
 import NetworkRpg.Components.Position;
 import NetworkRpg.Factories.ModelFactory;
@@ -250,6 +249,7 @@ public class ModelState extends BaseAppState {
         Quaternion turn = new Quaternion();
         turn.fromAngleAxis(s.avatarControl.getViewDirection().normalize().angleBetween(s.avatarControl.getViewDirection().normalize()), Vector3f.UNIT_Y);
         s.avatarControl.setWalkDirection(turn.mult(s.avatarControl.getWalkDirection()));
+//        s.avatarControl.setWalkDirection(s.avatarControl.getWalkDirection().add(msg.getDirection().normalize()));
     }
     
     public void setAvatarDirection(String dir,float value,float tpf)
@@ -277,6 +277,7 @@ public class ModelState extends BaseAppState {
         Quaternion turn = new Quaternion();
         turn.fromAngleAxis(playerAvatar.avatarControl.getViewDirection().normalize().angleBetween(playerAvatar.avatarControl.getViewDirection().normalize()), Vector3f.UNIT_Y);
         playerAvatar.avatarControl.setWalkDirection(turn.mult(playerAvatar.avatarControl.getWalkDirection()));
+        //playerAvatar.avatarControl.setWalkDirection(playerAvatar.avatarControl.getWalkDirection().add(playerAvatar.avatarControl.getViewDirection().normalize()));
         if (!isServer) {   
             ViewDirection cs = new ViewDirection(getApplication().getStateManager().getState(PlayerState.class).getClient().getPlayer(),playerAvatar.avatarControl.getViewDirection());
             getApplication().getStateManager().getState(ConnectionState.class).getClient().send(cs);

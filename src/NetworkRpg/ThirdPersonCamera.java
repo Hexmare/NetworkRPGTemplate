@@ -35,30 +35,19 @@ public class ThirdPersonCamera
     //These bounds keep the camera from spinning too far and clipping through
     //the floor or turning upside-down. You can change them as needed but it is
     //recommended to keep the values in the (-90,90) range.
-    public float maxVerticalAngle = 85 * FastMath.DEG_TO_RAD;
-    public float minVerticalAngle = 25 * FastMath.DEG_TO_RAD;
+    public float maxVerticalAngle = 45 * FastMath.DEG_TO_RAD;
+    public float minVerticalAngle = 15 * FastMath.DEG_TO_RAD;
  
     public ThirdPersonCamera(String name, Camera cam, Node player)
     {
 	pivot = new Node("CamTrack");
         pivot.setLocalTranslation(0, 1.8f, 0);
 	player.attachChild(pivot);
- 
 	cameraNode = new CameraNode(name, cam);
         cameraNode.setControlDir(CameraControl.ControlDirection.SpatialToCamera);
 	pivot.attachChild(cameraNode);
-//	player.attachChild(cameraNode);
-//        cameraNode.setLocalTranslation(new Vector3f(0, 0, followDistance));
         cameraNode.setLocalTranslation(new Vector3f(0, 10, -1 * followDistance));
-//        Quaternion rotQuat1 = new Quaternion();
-//        rotQuat1.fromAngleAxis((float)Math.PI * 0.5f, new Vector3f(0, 1, 0));
-//        pivot.setLocalRotation(rotQuat1);
-        
-        
 	cameraNode.lookAt(pivot.getLocalTranslation(), Vector3f.UNIT_Y);
-//        cameraNode.lookAt(player.getLocalTranslation(), Vector3f.UNIT_Y);
-        
-	pivot.getLocalRotation().fromAngleAxis(-verticalAngle, Vector3f.UNIT_X);
     }
  
     public void verticalRotate(float angle)

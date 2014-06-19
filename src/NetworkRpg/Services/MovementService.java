@@ -58,39 +58,47 @@ public class MovementService implements Service {
     private GameSystems systems;
     private EntityData ed;
     private EntitySet mobs;
-
+    private Long lastUpdate;
+    
     public MovementService() {
     }
 
+    @Override
     public void initialize(GameSystems systems) {
         this.systems = systems;
         this.ed = systems.getEntityData();
         mobs = ed.getEntities(Position.class);
+        lastUpdate = 0l;
     }
 
+    @Override
     public void update(long gameTime) {
-        mobs.applyChanges();
-        //System.out.println("Updating");
-        // Keep track of the places that are moved to
-        // in this frame so that we can cancel additional moves of
-        // mobs into those spaces without having to constantly
-        // recalculate from the maze service.
-        Set<Vector3f> occupied = new HashSet<Vector3f>();
-
-        // The presumption is that the code setting the move to
-        // already checked space availability at that time.  We
-        // only have to check for availability that changes because
-        // of these moves.
-
-
-        ModelState ms = systems.getApplication().getStateManager().getState(ModelState.class);
-        // Perform all movements for all active mobs
-        for (Entity e : mobs) {
-            Avatar modelAvatar = (Avatar)ms.getSpatial(e.getId());
-            Vector3f currentPos = modelAvatar.getChild("character node").getLocalTranslation();
-            System.out.println(currentPos);
-            ed.setComponent(e.getId(), new Position(currentPos,gameTime,gameTime));
+        
+        
+        if (50000000 > (gameTime - lastUpdate)) {
+            //System.out.println("Not Updating : " + gameTime);
+            return;
         }
+        lastUpdate = gameTime;
+        if (mobs.applyChanges()) {
+            // The presumption is that the code setting the move to
+            // already checked space availability at that time.  We
+            // only have to check for availability that changes because
+            // of these moves.
+
+            ModelState ms = systems.getApplication().getStateManager().getState(ModelState.class);
+            // Perform all movements for all active mobs
+            for (Entity e : mobs) {
+                Avatar modelAvatar = (Avatar) ms.getSpatial(e.getId());
+                Vector3f currentPos = modelAvatar.getChild("character node").getLocalTranslation();
+                
+                ed.setComponent(e.getId(), new Position(currentPos, gameTime, gameTime));
+            }
+        }
+
+
+
+
     }
 
     public void terminate(GameSystems systems) {

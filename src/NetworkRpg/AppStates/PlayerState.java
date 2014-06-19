@@ -217,7 +217,7 @@ public class PlayerState extends BaseAppState implements ActionListener, AnalogL
     public void onAnalog(String binding, float value, float tpf) {
         if (pan) {
             getApplication().getStateManager().getState(ModelState.class).setAvatarDirection(binding, value, tpf);
-            //updateCommand = true;
+            updateCommand = true;
         }
     }
 

@@ -36,7 +36,6 @@ package NetworkRpg.AppStates;
 
 import NetworkRpg.Components.ModelType;
 import NetworkRpg.Components.Position;
-import NetworkRpg.GameConstants;
 import NetworkRpg.Networking.Util;
 import NetworkRpg.RemoteGameClient;
 import com.jme3.app.Application;

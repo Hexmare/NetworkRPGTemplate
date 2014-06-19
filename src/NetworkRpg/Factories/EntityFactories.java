@@ -66,7 +66,7 @@ public class EntityFactories {
     }
                                              
     public static EntityId createObject( long time, 
-                                         Vector3f loc, Quaternion facing, 
+                                         Vector3f loc, Vector3f facing, 
                                          EntityComponent... adds ) { 
         Position pos = new Position(loc, facing, time, time);
         return createObject(pos, adds);                                         
@@ -87,7 +87,7 @@ public class EntityFactories {
     }
                                              
     public static EntityId createObject( ModelType type, long time,                                                                                     
-                                         Vector3f loc, Quaternion facing, 
+                                         Vector3f loc, Vector3f facing, 
                                          EntityComponent... adds ) {
         return createObject(type, time, new Position(loc, facing, time, time), adds); 
     }        
