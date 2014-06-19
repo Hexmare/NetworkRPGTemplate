@@ -34,12 +34,12 @@
 package NetworkRpg.AppStates;
 
 import NetworkRpg.GameClient;
+import NetworkRpg.Main;
 import NetworkRpg.Networking.Msg.CommandSet;
 //import trap.game.Direction;
 //import trap.game.Position;
 //import trap.game.SensorArea;
 import com.jme3.app.Application;
-import com.jme3.audio.Environment;
 import com.jme3.audio.Listener;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.input.InputManager;
@@ -50,15 +50,19 @@ import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
-import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.network.Client;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
+import com.jme3.system.AppSettings;
 import com.simsilica.es.EntityData;
 import com.simsilica.es.EntityId;
-import org.lwjgl.opengl.APPLEAuxDepthStencil;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+
+import org.lwjgl.opengl.DisplayMode;
+
 //import com.simsilica.lemur.GuiGlobals;
 //import com.simsilica.lemur.event.BaseAppState;
 //import com.simsilica.lemur.input.AnalogFunctionListener;
@@ -93,6 +97,7 @@ public class PlayerState extends BaseAppState implements ActionListener, AnalogL
     private boolean jump = false;
     private boolean updateCommand = false;
     private boolean pan = false;
+    private boolean altPressed = false;
     private Listener audioListener = new Listener();
 
     public PlayerState(GameClient client, Listener audioListener) {
@@ -132,8 +137,8 @@ public class PlayerState extends BaseAppState implements ActionListener, AnalogL
         inputManager.addMapping("TurnRight", new MouseAxisTrigger(MouseInput.AXIS_X, false));
         inputManager.addMapping("MouselookDown", new MouseAxisTrigger(MouseInput.AXIS_Y, true));
         inputManager.addMapping("MouselookUp", new MouseAxisTrigger(MouseInput.AXIS_Y, false));
-
-
+        inputManager.addMapping("lAlt", new KeyTrigger(KeyInput.KEY_LMENU));
+        inputManager.addMapping("enter", new KeyTrigger(KeyInput.KEY_RETURN));
 
         inputManager.addListener(this, "Left");
         inputManager.addListener(this, "Right");
@@ -146,6 +151,8 @@ public class PlayerState extends BaseAppState implements ActionListener, AnalogL
         inputManager.addListener(this, "TurnRight");
         inputManager.addListener(this, "MouselookDown");
         inputManager.addListener(this, "MouselookUp");
+        inputManager.addListener(this, "lAlt");
+        inputManager.addListener(this, "enter");
 
 
         /*
@@ -200,6 +207,34 @@ public class PlayerState extends BaseAppState implements ActionListener, AnalogL
 
         }
         
+        if (binding.equals("lAlt")) {
+            altPressed = value;
+
+
+        }
+        
+        if (binding.equals("enter") && altPressed) {
+            if (value) {
+                boolean isFullScreen = ((Main)getApplication()).getIsFullScreen();
+                AppSettings newAppSettings = new AppSettings(true);
+                if (isFullScreen) {
+                    newAppSettings.setResolution(1024, 768);
+                }
+                else
+                {
+                    newAppSettings.setResolution(1920, 1080);
+                }
+                
+                newAppSettings.setFullscreen(!isFullScreen);
+                ((Main)getApplication()).setIsFullScreen(!isFullScreen);
+                getApplication().setSettings(newAppSettings);
+                getApplication().restart();
+                //toggleToFullscreen();
+            }
+
+
+        }
+        
         if (binding.equals("Pan")) {
             pan = value;
             inputManager.setCursorVisible(!value);
@@ -213,20 +248,26 @@ public class PlayerState extends BaseAppState implements ActionListener, AnalogL
     public void onAnalog(String binding, float value, float tpf) {
         if (pan) {
             getApplication().getStateManager().getState(ModelState.class).setAvatarDirection(binding, value, tpf);
+            //updateCommand = true;
         }
     }
 
+    public void toggleToFullscreen() {
+        AppSettings settings = new AppSettings(false);
+        GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        java.awt.DisplayMode[] modes = device.getDisplayModes();
+        int i=0; // note: there are usually several, let's pick the first
+        settings.setResolution(modes[i].getWidth(),modes[i].getHeight());
+        settings.setFrequency(modes[i].getRefreshRate());
+        settings.setBitsPerPixel(modes[i].getBitDepth());
+        settings.setFullscreen(device.isFullScreenSupported());
+        getApplication().setSettings(settings);
+        getApplication().restart(); // restart the context to apply changes
+      }
+    
     @Override
     protected void cleanup(Application app) {
-        /*
-         InputMapper inputMapper = GuiGlobals.getInstance().getInputMapper();
-         inputMapper.removeAnalogListener(this,
-         PlayerFunctions.F_NORTH,
-         PlayerFunctions.F_SOUTH,
-         PlayerFunctions.F_EAST,
-         PlayerFunctions.F_WEST);
-                                         
-         */
+        
     }
 
     @Override
@@ -234,7 +275,6 @@ public class PlayerState extends BaseAppState implements ActionListener, AnalogL
         Camera cam = getApplication().getCamera();
         if (updateCommand) {
             updateCommand = false;
-            //System.out.println("sending update");
             CommandSet cs = new CommandSet(player, fwd, rev, left, right, jump);
             networkClient.send(cs);
             getApplication().getStateManager().getState(ModelState.class).setAvatarCommand(cs);

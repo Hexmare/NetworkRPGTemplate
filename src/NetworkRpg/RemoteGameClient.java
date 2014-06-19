@@ -34,7 +34,9 @@
 package NetworkRpg;
 
 
+import NetworkRpg.AppStates.MainMenuState;
 import NetworkRpg.AppStates.ModelState;
+import NetworkRpg.Networking.Msg.ChatMessage;
 import NetworkRpg.Networking.Msg.CommandSet;
 import NetworkRpg.Networking.Msg.GameTimeMessage;
 import NetworkRpg.Networking.Msg.HelloMessage;
@@ -204,6 +206,11 @@ public class RemoteGameClient implements GameClient {
         //System.out.println("Command set received : " + getGameTime());
         app.getStateManager().getState(ModelState.class).setAvatarCommand(msg);
         
+    }
+    
+    public void chatMessage(ChatMessage msg)
+    {
+        app.getStateManager().getState(MainMenuState.class).processChatMessage(msg);
     }
 
     public void close() {

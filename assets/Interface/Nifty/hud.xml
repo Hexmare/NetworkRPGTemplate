@@ -2,35 +2,69 @@
 <nifty>
     <useStyles filename="nifty-default-styles.xml"/>
     <useControls filename="nifty-default-controls.xml"/>
+    <!-- Control definition of chat area -->
     
     <screen controller="NetworkRpg.GameGuiController" id="start">
         <layer childLayout="center" height="100px" id="layer0" >
-            <control name="button" label="Start" id="StartButton" align="center" valign="center"> 
-                <interact onClick="startGame()" />
-            </control>
+            <panel id="login" childLayout="vertical">
+                <panel childLayout="horizontal">
+                    <text text="Player Name" font="Interface/Fonts/Default.fnt" width="200px" height="100%" wrap="true" />
+                    <control label="" id="userName" name="textfield" width="200px" text="hexmare"/>
+                </panel>
+                <panel height="5px" width="20px"></panel>
+                <panel childLayout="horizontal">
+                    <text text="Server Address" font="Interface/Fonts/Default.fnt" width="200px" height="100%" wrap="true" />
+                    <control label="" id="hostName" name="textfield" width="200px" text="127.0.0.1"/>
+                </panel>
+                <panel height="20px" width="20px"></panel>
+                <control name="button" label="Start" id="StartButton" align="center" valign="center"> 
+                    <interact onClick="startGame()" />
+                </control>
+            </panel>
+            
         </layer>
     </screen>
     
     <screen controller="NetworkRpg.GameGuiController" id="gameHud"
             inputMapping="de.lessvoid.nifty.input.mapping.MenuInputMapping"
     >
-        <layer childLayout="center" height="100%" width="100%" id="crossHairs">
+        <!--        <layer childLayout="center" height="100%" width="100%" id="crossHairs">
             <text text="+" 
                   font="Interface/Fonts/Default.fnt" color="red" width="100%" height="100%" wrap="true" />
+        </layer>-->
+        <layer id="windows" childLayout="absolute">
+            <control id="Chat_Window" name="window" title="Chat" width="400px" height="200px" x="25%">
+                <!--<text text="I'm Another Window!" style="base-font" color="#eeef" valign="center" width="100%" />-->
+                <panel id="chatContainer" childLayout="vertical" width="99%" height="99%" >
+                    <control id="chat_display" name="listBox" width="100%" height="95%" 
+                             displayItems="6" valign="top" align="left" 
+                             closeable="false"
+                             horizontal="optional" vertical="optional"/>
+                    <!--                <control name="chatArea" width="95%" height="90%"/>-->
+                    <panel height="5px" width="0px" />
+                    <panel childLayout="horizontal" valign="bottom">
+                        <control name="textfield" id="text_input" width="80%" />
+                        <panel height="0px" width="5px" />
+                        <control name="button" label="Send" width="50px" align="right">
+                            <interact onClick="sendMessage()" />
+                        </control>
+                    </panel>
+                </panel>
+                
+                
+            </control>
         </layer>
-        <layer childLayout="center"  id="chatLayer"> 
+<!--        <layer childLayout="center"  id="chatLayer"> 
             
-                <control name="chatControlDialogControl" height="100%" width="100%" id="ChatControl" />
             
-        </layer>
-        <layer childLayout="horizontal" height="90%" width="90%" id="layer1" >
-            <panel id="blue" backgroundColor="#00f8" width="40px" height = "80px" alight="right"></panel>
+            <control name="chatControlDialogControl" height="100%" width="100%" id="ChatControl" valign="top" align="left"/>
             
-        </layer>
+        </layer>-->
+        
         <layer childLayout="center" height="100px" id="layer0" >
             
             
-            <panel id="red" backgroundColor="#f008" width="640" height="75px" align="center" valign="bottom" childLayout="horizontal" margin="10px">
+<!--            <panel id="red" width="640" height="75px" align="center" valign="bottom" childLayout="horizontal" margin="10px">
                 <image childLayout="center" filename="Textures/icons/sword.png"  height="64px" width="64px" visibleToMouse="true" id="B1">
                     <interact onClick="onClick()" />
                     <image filename="Textures/icons/littleSword.png"  height="32px" width="32px" visibleToMouse="true" id="B1a"/>
@@ -62,7 +96,16 @@
                 <image filename="Textures/icons/sword.png"  height="64px" width="64px" visibleToMouse="true" id="B0">
                     <interact onClick="toggleCrosshairs()" />
                 </image>  
-            </panel>
+            </panel>-->
         </layer>
     </screen>
+    
+    <controlDefinition name="chatArea" controller="NetworkRpg.NIFTYControllers.ChatAreaController">
+        <panel childLayout="center" width="$width" height="$height">
+            <control name="scrollPanel" id="scroll_panel" width="100%" height="100%" horizontal="$horizontal" vertical="$vertical" autoScroll="$autoScroll">
+                <label text="$text" id="text_area" width="100%" height="100%"
+                       wrap="true" textHAlign="left" textVAlign="top" align="left" />
+            </control>
+        </panel>
+    </controlDefinition>
 </nifty>

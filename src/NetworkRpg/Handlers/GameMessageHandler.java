@@ -16,6 +16,7 @@ import NetworkRpg.Networking.Msg.LocAndDir;
 import NetworkRpg.Networking.Msg.PlayerInfoMessage;
 import NetworkRpg.Networking.Msg.ServerKill;
 import NetworkRpg.Factories.EntityFactories;
+import NetworkRpg.Networking.Msg.ChatMessage;
 import NetworkRpg.Networking.Msg.ViewDirection;
 import com.jme3.math.Vector3f;
 import com.jme3.network.HostedConnection;
@@ -132,6 +133,9 @@ public class GameMessageHandler {
         conn.getServer().broadcast(msg);
     }
     
+    protected void chatMessage(ChatMessage msg){
+        conn.getServer().broadcast(msg);
+    }
     
     
     

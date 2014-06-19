@@ -37,6 +37,7 @@ public class ChatControlDialogController implements Controller {
     this.chatIconNiftyUser = nifty.createImage("Interface/chatcontrol/chat-icon-user.png", false);
     chat.addPlayer("void", chatIconVoid);
     chat.addPlayer("nifty-user", chatIconNiftyUser);
+    
   }
 
   @Override

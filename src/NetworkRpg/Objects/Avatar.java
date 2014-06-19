@@ -12,9 +12,15 @@ import com.jme3.animation.LoopMode;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.BetterCharacterControl;
+import com.jme3.font.BitmapFont;
+import com.jme3.font.BitmapText;
+import com.jme3.font.Rectangle;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.control.BillboardControl;
 
 /**
  *
@@ -31,13 +37,14 @@ public class Avatar extends Node implements AnimEventListener{
     private Node rootNode;
     private AnimChannel animChannel;
     private AnimControl animControl;
-    
-    
+    private BitmapText label;
+    private Node textNode;
     private String idleAnim = "IdleBase";
     private String walkAnim = "RunBase";
     private String attackAnim = "SliceHorizontal";
     private String jumpAnim = "JumpLoop"; //hilarious
-    
+    private BitmapFont guiFont;
+    private String playerName;
     public Avatar() {
         createAvatar();
     }
@@ -54,7 +61,9 @@ public class Avatar extends Node implements AnimEventListener{
         App = app;
         bulletAppState = App.getStateManager().getState(BulletAppState.class);
         rootNode = App.getRootNode();
+        playerName = "";
         createAvatar();
+        
     }
     
     public Avatar(BulletAppState bas)
@@ -92,9 +101,26 @@ public class Avatar extends Node implements AnimEventListener{
         
         // Add character node to the rootNode
         //rootNode.attachChild(this);
-        
-        
-        
+        guiFont = App.getAssetManager().loadFont("Interface/Fonts/Default.fnt");
+        label = new BitmapText( guiFont, false );
+        label.setSize( 1f );
+        label.setText( playerName );
+        float textWidth = label.getLineWidth() + 20;
+        float textOffset = textWidth / 2;
+        label.setBox( new Rectangle(-textOffset,0, textWidth, label.getHeight()) );
+        label.setColor( new ColorRGBA( 0, 1, 1, 1 ) );
+        label.setAlignment( BitmapFont.Align.Center );
+        label.setQueueBucket( RenderQueue.Bucket.Transparent );
+        BillboardControl bc = new BillboardControl();
+        bc.setAlignment( BillboardControl.Alignment.Screen );
+        label.addControl(bc);
+
+
+
+        textNode = new Node( "LabelNode" );
+        textNode.setLocalTranslation( 0, label.getHeight() * 5, 0 );
+        textNode.attachChild( label );
+        model.attachChild(textNode);
 
        //avatarSpatial = clientMain.getAssetManager().loadModel("Models/Sinbad/Sinbad.mesh.xml");
        //this.attachChild(avatarSpatial);
@@ -117,6 +143,11 @@ public class Avatar extends Node implements AnimEventListener{
        
        }
 
+    public void setPlayerName(String value){
+        playerName = value;
+        label.setText(playerName);
+    }
+    
     public void onAnimCycleDone(AnimControl control, AnimChannel channel, String animName) {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

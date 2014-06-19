@@ -57,6 +57,7 @@ import com.simsilica.es.Entity;
 import com.simsilica.es.EntityData;
 import com.simsilica.es.EntityId;
 import com.simsilica.es.EntitySet;
+import com.simsilica.es.Name;
 //import com.simsilica.lemur.event.BaseAppState;
 import java.util.Collection;
 import java.util.HashMap;
@@ -82,6 +83,7 @@ public class ModelState extends BaseAppState {
 
     private EntityData ed;
     private EntitySet entities;
+    private EntitySet nameSet;
     private TimeProvider time;
     private Map<EntityId, Spatial> models = new HashMap<EntityId, Spatial>();
     private Node modelRoot;
@@ -135,9 +137,10 @@ public class ModelState extends BaseAppState {
             models.put(e.getId(), s);
             updateModelSpatial(e, s);
             modelRoot.attachChild(s);
+            
             if (!isServer) {
                 if (e.getId().getId() == client.getPlayer().getId()) {
-                System.out.println("Here is our player");
+                //System.out.println("Here is our player");
                 playerAvatar = (Avatar)s;
                 camera = new ThirdPersonCamera("Camera Node", getApplication().getCamera(), (Node)((Avatar)s).getChild("character node"));
             }
@@ -165,12 +168,17 @@ public class ModelState extends BaseAppState {
         //if( ic != null ) {
         //    ic.setTarget(p.getLocation(), p.getFacing(), p.getChangeTime(), p.getTime());
         //} else {        
+        
         ModelType mt = e.get(ModelType.class);
         if (mt != null && mt.getType().equalsIgnoreCase("ogre")) {
             //s.getControl(BetterCharacterControl.class).warp(p.getLocation());
             //System.out.println("Updating Position");
+            Name nm =  e.get(Name.class);
+
             if (this.isServer == false) {
                 ((Avatar)s).avatarControl.warp(p.getLocation());
+                
+                
             }
             
         }
@@ -181,6 +189,22 @@ public class ModelState extends BaseAppState {
         }
             
         //}
+    }
+    
+    protected void updateNames( Set<Entity> set ) {
+
+        for( Entity e : set ) {
+            Spatial s = models.get(e.getId());
+            Name nm =  e.get(Name.class);
+            //((Avatar)s).setPlayerName("hexmare");
+            if (!isServer) {
+                if (nm != null) {
+                    ((Avatar)s).setPlayerName(nm.getName());
+                    
+                }
+            }
+            
+        }
     }
     
     public void setAvatarCommand(CommandSet cs)
@@ -194,7 +218,7 @@ public class ModelState extends BaseAppState {
         Vector3f ld = ((Node)s).getChild(0).getWorldRotation().clone().mult(Vector3f.UNIT_X);
 //        Vector3f fd = playerAvatar.avatarControl.getViewDirection().clone().mult(Vector3f.UNIT_Z);
 //        Vector3f ld = playerAvatar.avatarControl.getViewDirection().clone().mult(Vector3f.UNIT_X);
-        System.out.println(fd);
+        //System.out.println(fd);
 //        playerAvatar.avatarControl.getViewDirection()
         if (cs.isLeft()) {
             wd.addLocal(ld);
@@ -217,9 +241,7 @@ public class ModelState extends BaseAppState {
             if (((Avatar)s).avatarControl.isOnGround()) {
                 ((Avatar)s).avatarControl.jump();
                 walking = false;
-            }
-            
-            
+            }  
         }
         //System.out.println(wd);
         //mainClass.entityData.setComponent(mainClass.entityId, new walkDirection(wd.multLocal(3.5f,0,3.5f)));
@@ -231,14 +253,12 @@ public class ModelState extends BaseAppState {
         {
             ((Avatar)s).setAnim("idle");
         }
-
     }
     
     public void setAvatarViewDirection(ViewDirection msg)
     {
         Avatar s = (Avatar) models.get(msg.getEid());
-        s.avatarControl.setViewDirection(msg.getDirection());
-        
+        s.avatarControl.setViewDirection(msg.getDirection());   
         Quaternion turn = new Quaternion();
         turn.fromAngleAxis(s.avatarControl.getViewDirection().normalize().angleBetween(s.avatarControl.getViewDirection().normalize()), Vector3f.UNIT_Y);
         s.avatarControl.setWalkDirection(turn.mult(s.avatarControl.getWalkDirection()));
@@ -249,49 +269,31 @@ public class ModelState extends BaseAppState {
         //System.out.println("setting direction");
         if (dir.equals("TurnLeft"))
 	{
-
             Quaternion turn = new Quaternion();
 	    turn.fromAngleAxis(mouselookSpeed*value, Vector3f.UNIT_Y);
 	    playerAvatar.avatarControl.setViewDirection(turn.mult(playerAvatar.avatarControl.getViewDirection()));
-            
-
 	}
 	else if (dir.equals("TurnRight"))
 	{
-	    
-
             Quaternion turn = new Quaternion();
-	    turn.fromAngleAxis(-mouselookSpeed*value, Vector3f.UNIT_Y);
-            
+	    turn.fromAngleAxis(-mouselookSpeed*value, Vector3f.UNIT_Y);          
 	    playerAvatar.avatarControl.setViewDirection(turn.mult(playerAvatar.avatarControl.getViewDirection()));
-
 	}
 	else if (dir.equals("MouselookDown"))
 	{
-
-                camera.verticalRotate(mouselookSpeed*value);
-
-            
+                camera.verticalRotate(mouselookSpeed*value); 
 	}
 	else if (dir.equals("MouselookUp"))
 	{
-
                 camera.verticalRotate(-mouselookSpeed*value);
-
-            
 	}
-        
-        //System.out.println(playerAvatar.avatarControl.getViewDirection());
-        
         Quaternion turn = new Quaternion();
         turn.fromAngleAxis(playerAvatar.avatarControl.getViewDirection().normalize().angleBetween(playerAvatar.avatarControl.getViewDirection().normalize()), Vector3f.UNIT_Y);
         playerAvatar.avatarControl.setWalkDirection(turn.mult(playerAvatar.avatarControl.getWalkDirection()));
-        if (!isServer) {
-            
+        if (!isServer) {   
             ViewDirection cs = new ViewDirection(getApplication().getStateManager().getState(PlayerState.class).getClient().getPlayer(),playerAvatar.avatarControl.getViewDirection());
             getApplication().getStateManager().getState(ConnectionState.class).getClient().send(cs);
-        }
-        
+        }  
     }
 
     protected void updateModels( Set<Entity> set ) {
@@ -302,7 +304,6 @@ public class ModelState extends BaseAppState {
                 log.error("Model not found for updated entity:" + e);
                 continue;
             }
-            //System.out.println("Updating Model");
             updateModelSpatial(e, s);
         }
     }
@@ -312,6 +313,10 @@ public class ModelState extends BaseAppState {
             removeModels(entities.getRemovedEntities());
             addModels(entities.getAddedEntities());
             updateModels(entities.getChangedEntities());
+        }
+        if (nameSet.applyChanges()) {
+            updateNames(nameSet.getAddedEntities());
+            updateNames(nameSet.getChangedEntities());
         }
     }
 
@@ -323,7 +328,7 @@ public class ModelState extends BaseAppState {
         // Grab the set of entities we are interested in
         //ed = getState(EntityDataState.class).getEntityData();
         entities = ed.getEntities(Position.class, ModelType.class);
-
+        nameSet = ed.getEntities(Name.class);
         // Create a root for all of the models we create
         modelRoot = new Node("Model Root");
         bulletAppState = app.getStateManager().getState(BulletAppState.class);

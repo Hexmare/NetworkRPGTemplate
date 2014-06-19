@@ -32,7 +32,8 @@ public class Util {
         LocAndDir.class,
         PlayerInfoMessage.class,
         CommandSet.class,
-        ViewDirection.class
+        ViewDirection.class,
+        ChatMessage.class
     };
     
     private static final Class[] forced = {
@@ -46,7 +47,8 @@ public class Util {
         ModelType.class,
         Position.class,
         Speed.class,
-        Dead.class
+        Dead.class,
+        PlayerName.class
         
     };
     

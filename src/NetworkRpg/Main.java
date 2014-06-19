@@ -3,12 +3,8 @@ package NetworkRpg;
 import NetworkRpg.AppStates.ConnectionState;
 import NetworkRpg.AppStates.MainMenuState;
 import com.jme3.app.SimpleApplication;
-import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
-import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.shape.Box;
+import com.jme3.system.AppSettings;
 
 /**
  * test
@@ -16,9 +12,16 @@ import com.jme3.scene.shape.Box;
  */
 public class Main extends SimpleApplication {
 
+    private AppSettings settings;
+    private boolean isFullScreen = false;
+    
     public static void main(String[] args) {
         Main app = new Main();
+        AppSettings settings = new AppSettings(true);
+        settings.setResolution(1280,1024);
         app.setPauseOnLostFocus(false);
+        app.setDisplayStatView(false);
+        app.setDisplayFps(false);
         app.start();
     }
     
@@ -27,11 +30,19 @@ public class Main extends SimpleApplication {
         super();
     }
 
+    public boolean getIsFullScreen(){
+        return isFullScreen;
+    }
     
+    public void setIsFullScreen(boolean value)
+    {
+        this.isFullScreen = value;
+    }
     
     @Override
     public void simpleInitApp() {
         getStateManager().attach(new MainMenuState());
+
     }
 
     @Override

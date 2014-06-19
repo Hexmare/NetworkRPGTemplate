@@ -8,7 +8,9 @@ package NetworkRpg;
  *
  * @author Rebel
  */
+import NetworkRpg.AppStates.ConnectionState;
 import NetworkRpg.AppStates.MainMenuState;
+import NetworkRpg.Networking.Msg.ChatMessage;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
@@ -18,6 +20,7 @@ import de.lessvoid.nifty.builder.PanelBuilder;
 import de.lessvoid.nifty.builder.PopupBuilder;
 import de.lessvoid.nifty.controls.Console;
 import de.lessvoid.nifty.controls.ConsoleCommands;
+import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.console.builder.ConsoleBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
@@ -227,23 +230,32 @@ public class GameGuiController extends AbstractAppState implements ScreenControl
     }
 
     public void startGame() {
-//        System.out.println(stateManager);
-        this.app.getStateManager().getState(MainMenuState.class).connectToServer();
+
+        //System.out.println(screen.findNiftyControl("userName",TextField.class).getText()); 
+        
+        this.app.getStateManager().getState(MainMenuState.class).setPlayerName(screen.findNiftyControl("userName",TextField.class).getText());
+        this.app.getStateManager().getState(MainMenuState.class).connectToServer(screen.findNiftyControl("userName",TextField.class).getText(),screen.findNiftyControl("hostName",TextField.class).getText(),"1234");
 //        System.out.println("Clicked startgame button");
         this.nifty.gotoScreen("gameHud");
         //this.app.startGame();
+        
+        changeDialogTo("ChatControl");
 
     }
 
+    public void sendMessage()
+    {
+        TextField inputBox = screen.findNiftyControl("text_input", TextField.class);
+//        System.out.println(inputBox.getText());
+        ChatMessage cm = new ChatMessage(stateManager.getState(MainMenuState.class).getPlayerName() + " : " + inputBox.getText());
+        //stateManager.getState(MainMenuState.class).processChatMessage(cm);
+        stateManager.getState(ConnectionState.class).getClient().send(cm);
+                
+        //this.stateManager.getState(MainMenuState.class).processChatMessage(cm);
+        inputBox.setText("");
+    }
+    
     public void screenResize() {
-        System.out.println("resize called");
-        /*AppSettings settings = new AppSettings(true);;
-        
-         settings.setResolution(1024, 768);
-         app.setSettings(settings);
-         app.restart();
-         //app.hrm();
-         */
     }
 
     private class ShowCommand implements ConsoleCommands.ConsoleCommand {
