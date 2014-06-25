@@ -109,7 +109,7 @@ public class ModelState extends BaseAppState {
     
     public Spatial getSpatial( EntityId entity ) {
         // Make sure we are up to date
-        refreshModels();
+        refreshModels(0);
         return models.get(entity);
     }
 
@@ -133,7 +133,7 @@ public class ModelState extends BaseAppState {
 
             s = createSpatial(e);
             models.put(e.getId(), s);
-            updateModelSpatial(e, s);
+            updateModelSpatial(e, s,0);
             modelRoot.attachChild(s);
             
             if (!isServer) {
@@ -160,7 +160,7 @@ public class ModelState extends BaseAppState {
         }
     }
 
-    protected void updateModelSpatial( Entity e, Spatial s ) {
+    protected void updateModelSpatial( Entity e, Spatial s,float tpf) {
         Position p = e.get(Position.class);
     
         
@@ -170,7 +170,11 @@ public class ModelState extends BaseAppState {
             Name nm =  e.get(Name.class);
 
             if (this.isServer == false) {
-                ((Avatar)s).avatarControl.warp(p.getLocation());
+                Vector3f tLocation = p.getLocation().clone();
+                if (tLocation.distance(((Avatar)s).getLocalTranslation()) >= 1) {
+                    ((Avatar)s).avatarControl.warp(tLocation.interpolate(((Avatar)s).getLocalTranslation(), tpf));
+                }
+                
                 
                 
             }
@@ -284,7 +288,7 @@ public class ModelState extends BaseAppState {
         }  
     }
 
-    protected void updateModels( Set<Entity> set ) {
+    protected void updateModels( Set<Entity> set ,float tpf) {
 
         for( Entity e : set ) {
             Spatial s = models.get(e.getId());
@@ -292,15 +296,15 @@ public class ModelState extends BaseAppState {
                 log.error("Model not found for updated entity:" + e);
                 continue;
             }
-            updateModelSpatial(e, s);
+            updateModelSpatial(e, s,tpf);
         }
     }
 
-    protected void refreshModels() {    
+    protected void refreshModels(float tpf) {    
         if( entities.applyChanges() ) {
             removeModels(entities.getRemovedEntities());
             addModels(entities.getAddedEntities());
-            updateModels(entities.getChangedEntities());
+            updateModels(entities.getChangedEntities(),tpf);
         }
         if (nameSet.applyChanges()) {
             updateNames(nameSet.getAddedEntities());
@@ -342,7 +346,7 @@ public class ModelState extends BaseAppState {
 
     @Override
     public void update( float tpf ) {
-        refreshModels();
+        refreshModels(tpf);
     }
 
     @Override
